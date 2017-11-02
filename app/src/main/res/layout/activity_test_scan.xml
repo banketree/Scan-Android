@@ -11,7 +11,7 @@
         app:sc_barcodeRectHeight="120dp"
         app:sc_borderColor="@android:color/white"
         app:sc_borderSize="1dp"
-        app:sc_cornerColor="@color/colorPrimaryDark"
+        app:sc_cornerColor="#f57257"
         app:sc_cornerLength="20dp"
         app:sc_cornerSize="3dp"
         app:sc_customScanLineDrawable="@drawable/scan_icon_scanline"
@@ -23,7 +23,7 @@
         app:sc_isShowTipBackground="true"
         app:sc_isShowTipTextAsSingleLine="false"
         app:sc_isTipTextBelowRect="false"
-        app:sc_maskColor="#33FFFFFF"
+        app:sc_maskColor="#33000000"
         app:sc_qrCodeTipText="将二维码/条码放入框内，即可自动扫描"
         app:sc_rectWidth="200dp"
         app:sc_scanLineColor="@color/colorPrimaryDark"
@@ -31,8 +31,7 @@
         app:sc_scanLineSize="0.5dp"
         app:sc_tipTextColor="@android:color/white"
         app:sc_tipTextSize="12sp"
-        app:sc_toolbarHeight="56dp"
-        app:sc_topOffset="20dp" />
+        app:sc_toolbarHeight="56dp" />
 
     <include layout="@layout/toolbar" />
 
