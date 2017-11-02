@@ -26,14 +26,6 @@ public class BoxQRCodeScanView extends BoxScanView {
             mRectHeight = mRectWidth;
         mAnimDelayTime = (int) ((1.0f * mAnimTime * mMoveStepDistance) / mRectHeight);
 
-        if (!TextUtils.isEmpty(mTipText)) {
-            if (mIsShowTipTextAsSingleLine) {
-                mTipTextSl = new StaticLayout(mTipText, mTipPaint, ScanUtil.getScreenResolution(getContext()).x, Layout.Alignment.ALIGN_CENTER, 1.0f, 0, true);
-            } else {
-                mTipTextSl = new StaticLayout(mTipText, mTipPaint, mRectWidth - 2 * mTipBackgroundRadius, Layout.Alignment.ALIGN_CENTER, 1.0f, 0, true);
-            }
-        }
-
         if (mIsCenterVertical) {
             int screenHeight = ScanUtil.getScreenResolution(getContext()).y;
             if (mToolbarHeight == 0) {

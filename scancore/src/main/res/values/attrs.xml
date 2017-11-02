@@ -38,9 +38,7 @@
         <!-- 是否是扫条形码，默认值为false -->
         <attr name="sc_isBarcode" format="boolean" />
         <!-- 扫描二维码时的提示文案，默认值为null -->
-        <attr name="sc_qrCodeTipText" format="string|reference" />
-        <!-- 扫描条码时的提示文案，默认值为null -->
-        <attr name="sc_barCodeTipText" format="string|reference" />
+        <attr name="sc_tipText" format="string|reference" />
         <!-- 提示文案字体大小，默认值为14sp -->
         <attr name="sc_tipTextSize" format="dimension|reference" />
         <!-- 提示文案颜色，默认值为@android:color/white -->

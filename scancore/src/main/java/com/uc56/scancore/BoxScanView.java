@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -137,6 +138,8 @@ public abstract class BoxScanView extends View {
             mIsCenterVertical = typedArray.getBoolean(attr, mIsCenterVertical);
         } else if (attr == R.styleable.ScanView_sc_toolbarHeight) {
             mToolbarHeight = typedArray.getDimensionPixelSize(attr, mToolbarHeight);
+        } else if (attr == R.styleable.ScanView_sc_tipText) {
+            mTipText = typedArray.getString(attr);
         } else if (attr == R.styleable.ScanView_sc_tipTextSize) {
             mTipTextSize = typedArray.getDimensionPixelSize(attr, mTipTextSize);
         } else if (attr == R.styleable.ScanView_sc_tipTextColor) {
@@ -164,6 +167,14 @@ public abstract class BoxScanView extends View {
 
         mTipPaint.setTextSize(mTipTextSize);
         mTipPaint.setColor(mTipTextColor);
+
+        if (!TextUtils.isEmpty(mTipText)) {
+            if (mIsShowTipTextAsSingleLine) {
+                mTipTextSl = new StaticLayout(mTipText, mTipPaint, ScanUtil.getScreenResolution(getContext()).x, Layout.Alignment.ALIGN_CENTER, 1.0f, 0, true);
+            } else {
+                mTipTextSl = new StaticLayout(mTipText, mTipPaint, mRectWidth - 2 * mTipBackgroundRadius, Layout.Alignment.ALIGN_CENTER, 1.0f, 0, true);
+            }
+        }
     }
 
     @Override
@@ -474,6 +485,14 @@ public abstract class BoxScanView extends View {
 
     public void setTipText(String tipText) {
         mTipText = tipText;
+
+        if (!TextUtils.isEmpty(mTipText)) {
+            if (mIsShowTipTextAsSingleLine) {
+                mTipTextSl = new StaticLayout(mTipText, mTipPaint, ScanUtil.getScreenResolution(getContext()).x, Layout.Alignment.ALIGN_CENTER, 1.0f, 0, true);
+            } else {
+                mTipTextSl = new StaticLayout(mTipText, mTipPaint, mRectWidth - 2 * mTipBackgroundRadius, Layout.Alignment.ALIGN_CENTER, 1.0f, 0, true);
+            }
+        }
     }
 
     public int getTipTextColor() {

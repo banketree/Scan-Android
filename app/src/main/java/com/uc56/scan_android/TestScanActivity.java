@@ -32,7 +32,8 @@ public class TestScanActivity extends AppCompatActivity {
 
         mQRCodeView = (ScanView) findViewById(R.id.zxingview);
         try {
-            mQRCodeView.showQRBoxView(ScanView.Box_Type_QR);
+            mQRCodeView.showBoxView(ScanView.Box_Type_IDCard);
+            mQRCodeView.getScanBoxView().setTipText("将证件放入框中");
             mQRCodeView.addHandleScanDataListener(new ZXingScan(new ZXingScan.IZXingResultListener() {
                 @Override
                 public void onScanResult(final String result) {//二维码
@@ -143,10 +144,12 @@ public class TestScanActivity extends AppCompatActivity {
                 mQRCodeView.closeFlashlight();
                 break;
             case R.id.scan_barcode:
-                mQRCodeView.changeToScanBarcodeStyle();
+                mQRCodeView.showBoxView(ScanView.Box_Type_Bar);
+                mQRCodeView.getScanBoxView().setTipText("将条形码放入框中");
                 break;
             case R.id.scan_qrcode:
-                mQRCodeView.changeToScanQRCodeStyle();
+                mQRCodeView.showBoxView(ScanView.Box_Type_QR);
+                mQRCodeView.getScanBoxView().setTipText("将二维码放入框中");
                 break;
             case R.id.choose_qrcde_from_gallery:
                 /*

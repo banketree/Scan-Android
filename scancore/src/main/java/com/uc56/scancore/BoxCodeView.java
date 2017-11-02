@@ -170,9 +170,9 @@ class BoxCodeView extends View {
             mBarcodeRectHeight = typedArray.getDimensionPixelSize(attr, mBarcodeRectHeight);
         } else if (attr == R.styleable.ScanView_sc_isBarcode) {
             mIsBarcode = typedArray.getBoolean(attr, mIsBarcode);
-        } else if (attr == R.styleable.ScanView_sc_barCodeTipText) {
+        } else if (attr == R.styleable.ScanView_sc_tipText) {
             mBarCodeTipText = typedArray.getString(attr);
-        } else if (attr == R.styleable.ScanView_sc_qrCodeTipText) {
+        } else if (attr == R.styleable.ScanView_sc_tipText) {
             mQRCodeTipText = typedArray.getString(attr);
         } else if (attr == R.styleable.ScanView_sc_tipTextSize) {
             mTipTextSize = typedArray.getDimensionPixelSize(attr, mTipTextSize);

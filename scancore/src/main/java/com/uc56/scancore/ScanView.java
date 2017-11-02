@@ -62,7 +62,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
     public static int Box_Type_QR = 0, Box_Type_Bar = 1, Box_Type_IDCard = 2;
 
     //int type = 0 ->QR  1->bar 2->idcard
-    public void showQRBoxView(int type) {
+    public void showBoxView(int type) {
         if (mScanBoxView != null)
             removeView(mScanBoxView);
         if (type == Box_Type_QR)
@@ -274,34 +274,6 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
             mProcessDataTask.cancelTask();
             mProcessDataTask = null;
         }
-    }
-
-    /**
-     * 切换成扫描条码样式
-     */
-    public void changeToScanBarcodeStyle() {
-//        if (!mScanBoxView.getIsBarcode()) {
-//            mScanBoxView.setIsBarcode(true);
-//        }
-    }
-
-    /**
-     * 切换成扫描二维码样式
-     */
-    public void changeToScanQRCodeStyle() {
-//        if (mScanBoxView.getIsBarcode()) {
-//            mScanBoxView.setIsBarcode(false);
-//        }
-    }
-
-    /**
-     * 当前是否为条码扫描样式
-     *
-     * @return
-     */
-    public boolean getIsScanBarcodeStyle() {
-//        return mScanBoxView.getIsBarcode();
-        return false;
     }
 
     @Override
