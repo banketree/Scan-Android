@@ -32,18 +32,7 @@ public class TestScanActivity extends AppCompatActivity {
 
         mQRCodeView = (ScanView) findViewById(R.id.zxingview);
         try {
-            mQRCodeView.showQRBoxView(ScanView.Box_Type_IDCard);
-            mQRCodeView.addHandleScanDataListener(new ZBarScan(new ZBarScan.IZbarResultListener() {
-                @Override
-                public void onScanResult(final String result) {//条形码
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onScanQRCodeSuccess("ZBarScan:" + result);
-                        }
-                    });
-                }
-            }));
+            mQRCodeView.showQRBoxView(ScanView.Box_Type_QR);
             mQRCodeView.addHandleScanDataListener(new ZXingScan(new ZXingScan.IZXingResultListener() {
                 @Override
                 public void onScanResult(final String result) {//二维码
@@ -55,6 +44,19 @@ public class TestScanActivity extends AppCompatActivity {
                     });
                 }
             }));
+
+            mQRCodeView.addHandleScanDataListener(new ZBarScan(new ZBarScan.IZbarResultListener() {
+                @Override
+                public void onScanResult(final String result) {//条形码
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onScanQRCodeSuccess("ZBarScan:" + result);
+                        }
+                    });
+                }
+            }));
+
             mQRCodeView.addHandleScanDataListener(new IDCardScan(new IDCardScan.IIDCardResultListener() {//身份证
                 @Override
                 public void onScanResult(final String result) {
@@ -75,8 +77,12 @@ public class TestScanActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mQRCodeView.startCamera();
-        mQRCodeView.showScanRect();
-        mQRCodeView.startSpot();
+        mQRCodeView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mQRCodeView.startSpotAndShowRect();
+            }
+        }, 300);
     }
 
     @Override

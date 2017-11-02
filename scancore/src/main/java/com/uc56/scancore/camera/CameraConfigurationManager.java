@@ -1,11 +1,14 @@
-package com.uc56.scancore;
+package com.uc56.scancore.camera;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
+
+import com.uc56.scancore.ScanUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -251,4 +254,6 @@ final class CameraConfigurationManager {
             parameters.set("taking-picture-zoom", tenDesiredZoom);
         }
     }
+
+
 }

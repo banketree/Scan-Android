@@ -1,6 +1,7 @@
 package com.uc56.scancore;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -80,5 +81,23 @@ public class ScanUtil {
         paint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(inputBitmap, 0, 0, paint);
         return outputBitmap;
+    }
+
+    public static int getScreenOrientation(Context context)
+    {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+
+        int orientation = Configuration.ORIENTATION_UNDEFINED;
+        if(display.getWidth()==display.getHeight()){
+            orientation = Configuration.ORIENTATION_SQUARE;
+        } else{
+            if(display.getWidth() < display.getHeight()){
+                orientation = Configuration.ORIENTATION_PORTRAIT;
+            }else {
+                orientation = Configuration.ORIENTATION_LANDSCAPE;
+            }
+        }
+        return orientation;
     }
 }

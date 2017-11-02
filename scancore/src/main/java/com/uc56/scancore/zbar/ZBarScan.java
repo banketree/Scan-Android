@@ -49,8 +49,8 @@ public class ZBarScan implements ScanView.IHandleScanDataListener {
         barcode.setData(data);
         result = processData(barcode);
 
-        if (TextUtils.isEmpty(result) && rect != null) //重复
-            return onHandleScanData(data, width, height, null);
+//        if (TextUtils.isEmpty(result) && rect != null) //重复
+//            return onHandleScanData(data, width, height, null);
 
         if (TextUtils.isEmpty(result))
             return false;
