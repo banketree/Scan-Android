@@ -59,6 +59,10 @@ public class ZBarScan implements ScanView.IHandleScanDataListener {
         return true;
     }
 
+    @Override
+    public Boolean isContinuity() {
+        return true;
+    }
 
     private String processData(Image barcode) {
         String result = null;

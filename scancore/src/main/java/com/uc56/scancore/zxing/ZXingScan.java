@@ -57,6 +57,11 @@ public class ZXingScan implements ScanView.IHandleScanDataListener {
         return true;
     }
 
+    @Override
+    public Boolean isContinuity() {
+        return true;
+    }
+
     public interface IZXingResultListener {
         void onScanResult(String result);
     }

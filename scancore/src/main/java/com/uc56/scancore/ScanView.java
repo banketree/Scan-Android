@@ -321,7 +321,16 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
 
             @Override
             protected void onPostExecute(Boolean result) {
-                if (!mSpotAble || result)
+                if (!mSpotAble || handleScanDataListenerList.isEmpty())
+                    return;
+
+                boolean isContinuity = false;
+                for (IHandleScanDataListener listener : handleScanDataListenerList) {
+                    if (listener.isContinuity())
+                        isContinuity = listener.isContinuity();
+                }
+
+                if (!isContinuity)
                     return;
 
                 try {
@@ -347,5 +356,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
 
     public interface IHandleScanDataListener {
         Boolean onHandleScanData(byte[] data, int width, int height, Rect rect);
+
+        public Boolean isContinuity();//是否连续
     }
 }

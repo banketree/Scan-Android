@@ -21,6 +21,11 @@ public class IDCardScan implements ScanView.IHandleScanDataListener {
         return false;
     }
 
+    @Override
+    public Boolean isContinuity() {
+        return true;
+    }
+
     public interface IIDCardResultListener {
         void onScanResult(String result);
     }
