@@ -31,47 +31,7 @@ public class TestScanActivity extends AppCompatActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         mQRCodeView = (ScanView) findViewById(R.id.zxingview);
-        try {
-            mQRCodeView.showBoxView(ScanView.Box_Type_IDCard);
-            mQRCodeView.getScanBoxView().setTipText("将证件放入框中");
-            mQRCodeView.addHandleScanDataListener(new ZXingScan(new ZXingScan.IZXingResultListener() {
-                @Override
-                public void onScanResult(final String result) {//二维码
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onScanQRCodeSuccess("ZXingScan:" + result);
-                        }
-                    });
-                }
-            }));
-
-            mQRCodeView.addHandleScanDataListener(new ZBarScan(new ZBarScan.IZbarResultListener() {
-                @Override
-                public void onScanResult(final String result) {//条形码
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onScanQRCodeSuccess("ZBarScan:" + result);
-                        }
-                    });
-                }
-            }));
-
-            mQRCodeView.addHandleScanDataListener(new IDCardScan(new IDCardScan.IIDCardResultListener() {//身份证
-                @Override
-                public void onScanResult(final String result) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onScanQRCodeSuccess("IDCardScan:" + result);
-                        }
-                    });
-                }
-            }));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        test();
     }
 
     @Override
@@ -144,10 +104,13 @@ public class TestScanActivity extends AppCompatActivity {
                 mQRCodeView.closeFlashlight();
                 break;
             case R.id.scan_barcode:
+                test();
                 mQRCodeView.showBoxView(ScanView.Box_Type_Bar);
                 mQRCodeView.getScanBoxView().setTipText("将条形码放入框中");
+
                 break;
             case R.id.scan_qrcode:
+                test();
                 mQRCodeView.showBoxView(ScanView.Box_Type_QR);
                 mQRCodeView.getScanBoxView().setTipText("将二维码放入框中");
                 break;
@@ -160,6 +123,55 @@ public class TestScanActivity extends AppCompatActivity {
                 startActivityForResult(BGAPhotoPickerActivity.newIntent(this, null, 1, null, false), REQUEST_CODE_CHOOSE_QRCODE_FROM_GALLERY);
                 break;
         }
+    }
+
+    private void test() {
+        try {
+            mQRCodeView.showBoxView(ScanView.Box_Type_IDCard);
+            mQRCodeView.getScanBoxView().setTipText("将证件放入框中");
+            mQRCodeView.getScanBoxView().setOnlyDecodeScanBoxArea(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mQRCodeView.removeHandleScanDataListenerAll();
+
+        mQRCodeView.addHandleScanDataListener(new ZXingScan(new ZXingScan.IZXingResultListener() {
+            @Override
+            public void onScanResult(final String result) {//二维码
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onScanQRCodeSuccess("ZXingScan:" + result);
+                    }
+                });
+            }
+        }));
+
+        mQRCodeView.addHandleScanDataListener(new ZBarScan(new ZBarScan.IZbarResultListener() {
+            @Override
+            public void onScanResult(final String result) {//条形码
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onScanQRCodeSuccess("ZBarScan:" + result);
+                    }
+                });
+            }
+        }));
+
+        mQRCodeView.addHandleScanDataListener(new IDCardScan(new IDCardScan.IIDCardResultListener() {//身份证
+            @Override
+            public void onScanResult(final String result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onScanQRCodeSuccess("IDCardScan:" + result);
+                    }
+                });
+            }
+        }));
     }
 
     @Override

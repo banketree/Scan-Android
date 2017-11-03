@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import com.uc56.scancore.camera.CameraPreviewA;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.*;
 
 
 public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
@@ -20,11 +20,11 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
     protected CameraPreviewA mPreview;
     protected BoxScanView mScanBoxView;
 
-    protected List<IHandleScanDataListener> handleScanDataListenerList = new ArrayList<>();
+    private Queue<IHandleScanDataListener> handleScanDataListenerQueue = new ConcurrentLinkedQueue<IHandleScanDataListener>();
 
     protected Handler mHandler;
     protected boolean mSpotAble = false;
-    protected ProcessDataTask mProcessDataTask;
+    protected Thread mProcessDataTask;
     private int mOrientation;
     RelativeLayout.LayoutParams layoutParams;
     private Context context;
@@ -39,6 +39,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
         mHandler = new Handler();
         initView(context, attrs);
     }
+
 
     private void initView(Context context, AttributeSet attrs) {
         this.context = context;
@@ -63,8 +64,10 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
 
     //int type = 0 ->QR  1->bar 2->idcard
     public void showBoxView(int type) {
-        if (mScanBoxView != null)
+        if (mScanBoxView != null) {
             removeView(mScanBoxView);
+            mScanBoxView.setVisibility(GONE);
+        }
         if (type == Box_Type_QR)
             mScanBoxView = qrCodeBoxScanView;
         else if (type == Box_Type_Bar)
@@ -72,6 +75,11 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
         else if (type == Box_Type_IDCard)
             mScanBoxView = idCardBoxScanView;
         addView(mScanBoxView, layoutParams);
+        mScanBoxView.setVisibility(VISIBLE);
+    }
+
+    private synchronized Queue<IHandleScanDataListener> getHandleScanDataListenerQueque() {
+        return handleScanDataListenerQueue;
     }
 
     /**
@@ -82,13 +90,13 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
     public void addHandleScanDataListener(IHandleScanDataListener listener) {
         if (listener == null)
             return;
-        if (!handleScanDataListenerList.isEmpty()) {
-            for (IHandleScanDataListener itemListener : handleScanDataListenerList) {
+        if (!getHandleScanDataListenerQueque().isEmpty()) {
+            for (IHandleScanDataListener itemListener : getHandleScanDataListenerQueque()) {
                 if (itemListener == listener)
                     return;
             }
         }
-        handleScanDataListenerList.add(listener);
+        getHandleScanDataListenerQueque().add(listener);
     }
 
     /**
@@ -99,10 +107,10 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
     public void removeHandleScanDataListener(IHandleScanDataListener listener) {
         if (listener == null)
             return;
-        if (!handleScanDataListenerList.isEmpty()) {
-            for (IHandleScanDataListener itemListener : handleScanDataListenerList) {
+        if (!getHandleScanDataListenerQueque().isEmpty()) {
+            for (IHandleScanDataListener itemListener : getHandleScanDataListenerQueque()) {
                 if (itemListener == listener) {
-                    handleScanDataListenerList.remove(listener);
+                    getHandleScanDataListenerQueque().remove(listener);
                     return;
                 }
             }
@@ -110,7 +118,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
     }
 
     public void removeHandleScanDataListenerAll() {
-        handleScanDataListenerList.clear();
+        getHandleScanDataListenerQueque().clear();
     }
 
     public BoxScanView getScanBoxView() {
@@ -271,74 +279,77 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
      */
     protected void cancelProcessDataTask() {
         if (mProcessDataTask != null) {
-            mProcessDataTask.cancelTask();
-            mProcessDataTask = null;
+            try {
+                mProcessDataTask.stop();
+            } catch (Exception e) {
+            }
         }
+        mProcessDataTask = null;
     }
 
     @Override
     public void onPreviewFrame(final byte[] previewData, final Camera camera) {
-        if (!mSpotAble || handleScanDataListenerList.isEmpty())
+        if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty() || camera == null || camera.getParameters() == null)
             return;
 
-        Camera.Parameters parameters = mCamera.getParameters();
-        Camera.Size size = parameters.getPreviewSize();
-        int width = size.width;
-        int height = size.height;
-
-        byte[] data = previewData;
-
-        if (mOrientation == ScanUtil.ORIENTATION_PORTRAIT) {
-            data = new byte[previewData.length];
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    data[x * height + height - y - 1] = previewData[x + y * width];
-                }
-            }
-
-            int tmp = width;
-            width = height;
-            height = tmp;
-        }
-
-        final int widthP = width;
-        final int heightP = height;
-        final byte[] dataP = data;
-        final Rect rect = mScanBoxView.getScanBoxAreaRect(heightP);
+        final Camera.Parameters parameters = mCamera.getParameters();
+        final Camera.Size size = parameters.getPreviewSize();
+        final Rect rect = mScanBoxView.getScanBoxAreaRect(camera);
 
         cancelProcessDataTask();
-        mProcessDataTask = new ProcessDataTask() {
-
+        mProcessDataTask = new Thread(new Runnable() {
             @Override
-            protected Boolean doInBackground(Void... params) {
-                for (IHandleScanDataListener listener : handleScanDataListenerList) {
-                    if (listener.onHandleScanData(dataP, widthP, heightP, rect))
-                        return true;
+            public void run() {
+                try { //数据处理
+                    int width = size.width;
+                    int height = size.height;
+
+                    byte[] data = previewData;
+
+                    if (mOrientation == ScanUtil.ORIENTATION_PORTRAIT) {
+                        data = new byte[previewData.length];
+                        for (int y = 0; y < height; y++) {
+                            for (int x = 0; x < width; x++) {
+                                data[x * height + height - y - 1] = previewData[x + y * width];
+                            }
+                        }
+
+                        int tmp = width;
+                        width = height;
+                        height = tmp;
+                    }
+
+                    for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
+                        if (listener.onHandleScanData(data, width, height, rect))
+                            break;
+                    }
+                } catch (Exception e) {
                 }
 
-                return false;
-            }
+                try { //是否继续扫描
+                    if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
+                        return;
 
-            @Override
-            protected void onPostExecute(Boolean result) {
-                if (!mSpotAble || handleScanDataListenerList.isEmpty())
-                    return;
+                    boolean isContinuity = false;
+                    for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
+                        if (listener.isContinuity()) {
+                            isContinuity = listener.isContinuity();
+                            break;
+                        }
+                    }
 
-                boolean isContinuity = false;
-                for (IHandleScanDataListener listener : handleScanDataListenerList) {
-                    if (listener.isContinuity())
-                        isContinuity = listener.isContinuity();
+                    if (!isContinuity)
+                        return;
+                } catch (Exception e) {
                 }
 
-                if (!isContinuity)
-                    return;
-
-                try {
-                    camera.setOneShotPreviewCallback(ScanView.this);
+                try { //继续扫描
+                    mHandler.post(mOneShotPreviewCallbackTask);
                 } catch (Exception e) {
                 }
             }
-        }.perform();
+        });
+        mProcessDataTask.start();
     }
 
     private Runnable mOneShotPreviewCallbackTask = new Runnable() {

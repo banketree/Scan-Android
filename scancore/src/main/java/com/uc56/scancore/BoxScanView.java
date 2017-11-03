@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.hardware.Camera;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -128,7 +129,7 @@ public abstract class BoxScanView extends View {
             mScanLineColor = typedArray.getColor(attr, mScanLineColor);
         } else if (attr == R.styleable.ScanView_sc_scanLineMargin) {
             mScanLineMargin = typedArray.getDimensionPixelSize(attr, mScanLineMargin);
-        }  else if (attr == R.styleable.ScanView_sc_borderSize) {
+        } else if (attr == R.styleable.ScanView_sc_borderSize) {
             mBorderSize = typedArray.getDimensionPixelSize(attr, mBorderSize);
         } else if (attr == R.styleable.ScanView_sc_borderColor) {
             mBorderColor = typedArray.getColor(attr, mBorderColor);
@@ -344,7 +345,7 @@ public abstract class BoxScanView extends View {
         mScanLineLeft = mFramingRect.left + mHalfCornerSize + 0.5f;
     }
 
-    public Rect getScanBoxAreaRect(int previewHeight) {
+    private Rect getScanBoxAreaRect(int previewHeight) {
         if (mIsOnlyDecodeScanBoxArea) {
             Rect rect = new Rect(mFramingRect);
             float ratio = 1.0f * previewHeight / getMeasuredHeight();
@@ -353,11 +354,28 @@ public abstract class BoxScanView extends View {
             rect.top = (int) (rect.top * ratio);
             rect.bottom = (int) (rect.bottom * ratio);
             return rect;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
+    public Rect getScanBoxAreaRect(final Camera camera) {
+        if (camera == null || camera.getParameters() == null)
+            return null;
+
+        final Camera.Parameters parameters = camera.getParameters();
+        final Camera.Size size = parameters.getPreviewSize();
+
+        int width = size.width;
+        int height = size.height;
+        if (ScanUtil.getOrientation(getContext()) == ScanUtil.ORIENTATION_PORTRAIT) {
+            int tmp = width;
+            width = height;
+            height = tmp;
+        }
+
+        return getScanBoxAreaRect(height);
+    }
 
     public int getMaskColor() {
         return mMaskColor;
