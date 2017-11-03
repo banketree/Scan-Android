@@ -67,6 +67,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
         if (mScanBoxView != null) {
             removeView(mScanBoxView);
             mScanBoxView.setVisibility(GONE);
+            mScanBoxView = null;
         }
         if (type == Box_Type_QR)
             mScanBoxView = qrCodeBoxScanView;
@@ -76,6 +77,14 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
             mScanBoxView = idCardBoxScanView;
         addView(mScanBoxView, layoutParams);
         mScanBoxView.setVisibility(VISIBLE);
+    }
+
+    public void hideBoxView() {
+        if (mScanBoxView != null) {
+            removeView(mScanBoxView);
+            mScanBoxView.setVisibility(GONE);
+        }
+        mScanBoxView = null;
     }
 
     private synchronized Queue<IHandleScanDataListener> getHandleScanDataListenerQueque() {
@@ -294,7 +303,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
 
         final Camera.Parameters parameters = mCamera.getParameters();
         final Camera.Size size = parameters.getPreviewSize();
-        final Rect rect = mScanBoxView.getScanBoxAreaRect(camera);
+        final Rect rect = mScanBoxView != null ? mScanBoxView.getScanBoxAreaRect(camera) : null;
 
         cancelProcessDataTask();
         mProcessDataTask = new Thread(new Runnable() {
