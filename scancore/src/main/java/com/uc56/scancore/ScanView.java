@@ -300,6 +300,9 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
         mProcessDataTask = new Thread(new Runnable() {
             @Override
             public void run() {
+                if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
+                    return;
+
                 try { //数据处理
                     int width = size.width;
                     int height = size.height;
@@ -318,6 +321,9 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
                         width = height;
                         height = tmp;
                     }
+
+                    if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
+                        return;
 
                     for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
                         if (listener.onHandleScanData(data, width, height, rect))
