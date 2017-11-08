@@ -44,8 +44,8 @@ public class CameraPreviewA extends CameraZoomPreview implements SurfaceHolder.C
                     Camera.Size optimalSize = getOptimalPreviewSize();
                     Camera.Parameters parameters = mCamera.getParameters();
                     parameters.setPreviewSize(optimalSize.width, optimalSize.height);
-                    parameters.setPictureFormat(256);
-                    parameters.setJpegQuality(100);
+//                    parameters.setPictureFormat(256);
+//                    parameters.setJpegQuality(100);
                     mCamera.setParameters(parameters);
                 }
             } catch (Exception e) {

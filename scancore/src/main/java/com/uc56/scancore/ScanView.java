@@ -324,12 +324,12 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
 
                     if (mOrientation == ScanUtil.ORIENTATION_PORTRAIT) {
                         data = new byte[previewData.length];
-                        for (int y = 0; y < height; y++) {
-                            for (int x = 0; x < width; x++) {
-                                data[x * height + height - y - 1] = previewData[x + y * width];
-                            }
-                        }
-
+//                        for (int y = 0; y < height; y++) {
+//                            for (int x = 0; x < width; x++) {
+//                                data[x * height + height - y - 1] = previewData[x + y * width];
+//                            }
+//                        }
+                        rotateYUV240SP(previewData, data, width, height);
                         int tmp = width;
                         width = height;
                         height = tmp;
@@ -369,6 +369,27 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
             }
         });
         mProcessDataTask.start();
+    }
+
+    public static void rotateYUV240SP(byte[] src, byte[] des, int width, int height) {
+        int wh = width * height;
+        //旋转Y
+        int k = 0;
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                des[k] = src[width * j + i];
+                k++;
+            }
+        }
+
+        for (int i = 0; i < width; i += 2) {
+            for (int j = 0; j < height / 2; j++) {
+                des[k] = src[wh + width * j + i];
+                des[k + 1] = src[wh + width * j + i + 1];
+                k += 2;
+            }
+        }
+
     }
 
     private Runnable mOneShotPreviewCallbackTask = new Runnable() {

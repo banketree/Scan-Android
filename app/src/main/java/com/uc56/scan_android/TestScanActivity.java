@@ -2,6 +2,11 @@ package com.uc56.scan_android;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -10,12 +15,15 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.uc56.scancore.ScanView;
 import com.uc56.scancore.zbar.ZBarScan;
 import com.uc56.scancore.zxing.QRCodeDecoder;
 import com.uc56.scancore.zxing.ZXingScan;
+
+import java.io.ByteArrayOutputStream;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 
@@ -24,6 +32,7 @@ public class TestScanActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CHOOSE_QRCODE_FROM_GALLERY = 666;
 
     private ScanView mQRCodeView;
+    private ImageView imageView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +40,7 @@ public class TestScanActivity extends AppCompatActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         mQRCodeView = (ScanView) findViewById(R.id.zxingview);
+        imageView = (ImageView) findViewById(R.id.img_camera);
         test();
     }
 
@@ -171,7 +181,43 @@ public class TestScanActivity extends AppCompatActivity {
                     }
                 });
             }
-        }));
+        }) {
+            @Override
+            public Boolean onHandleScanData(final byte[] data, final int width, final int height, Rect rect) {
+                super.onHandleScanData(data, width, height, rect);
+
+                try {
+                    ByteArrayOutputStream baos;
+                    byte[] rawImage;
+                    BitmapFactory.Options newOpts = new BitmapFactory.Options();
+                    newOpts.inJustDecodeBounds = true;
+                    YuvImage yuvimage = new YuvImage(
+                            data,
+                            ImageFormat.NV21,//YUV240SP
+                            width,
+                            height,
+                            null);
+                    baos = new ByteArrayOutputStream();
+                    yuvimage.compressToJpeg(new Rect(0, 0, width, height), 100, baos);// 80--JPG图片的质量[0-100],100最高
+                    rawImage = baos.toByteArray();
+                    //将rawImage转换成bitmap
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inPreferredConfig = Bitmap.Config.RGB_565;
+                    final Bitmap bitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            imageView.setImageBitmap(bitmap);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override

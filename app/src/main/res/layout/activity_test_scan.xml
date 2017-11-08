@@ -22,11 +22,11 @@
         app:sc_isShowTipTextAsSingleLine="true"
         app:sc_isTipTextBelowRect="true"
         app:sc_maskColor="#33000000"
-        app:sc_tipText="将二维码/条码放入框内，即可自动扫描"
         app:sc_rectWidth="200dp"
         app:sc_scanLineColor="@color/colorPrimaryDark"
         app:sc_scanLineMargin="0dp"
         app:sc_scanLineSize="0.5dp"
+        app:sc_tipText="将二维码/条码放入框内，即可自动扫描"
         app:sc_tipTextColor="@android:color/white"
         app:sc_tipTextSize="12sp"
         app:sc_toolbarHeight="0dp" />
@@ -34,4 +34,10 @@
     <include layout="@layout/toolbar" />
 
     <include layout="@layout/view_control" />
+
+    <ImageView
+        android:id="@+id/img_camera"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true" />
 </RelativeLayout>
