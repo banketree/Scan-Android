@@ -178,6 +178,10 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
         }
     }
 
+    public CameraPreviewA getCameraPreView() {
+        return mPreview;
+    }
+
     private void startCameraById(int cameraId) {
         try {
             mCamera = Camera.open(cameraId);
@@ -335,7 +339,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
                         return;
 
                     for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
-                        if (listener.onHandleScanData(data, width, height, rect))
+                        if (listener.onHandleScanData(data, width, height, rect) && mSpotAble && !getHandleScanDataListenerQueque().isEmpty())
                             break;
                     }
                 } catch (Exception e) {
