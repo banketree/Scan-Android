@@ -198,7 +198,7 @@ public class TestScanActivity extends AppCompatActivity {
                             height,
                             null);
                     baos = new ByteArrayOutputStream();
-                    yuvimage.compressToJpeg(new Rect(0, 0, width, height), 100, baos);// 80--JPG图片的质量[0-100],100最高
+                    yuvimage.compressToJpeg(rect, 100, baos);// 80--JPG图片的质量[0-100],100最高
                     rawImage = baos.toByteArray();
                     //将rawImage转换成bitmap
                     BitmapFactory.Options options = new BitmapFactory.Options();
