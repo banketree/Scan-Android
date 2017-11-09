@@ -21,7 +21,7 @@ public class BoxQRCodeScanView extends BoxScanView {
         super.afterInitCustomAttrs();
 
         if (mRectWidth == 0)
-            mRectWidth = ScanUtil.dp2px(getContext(), 200);
+            mRectWidth = ScanUtil.dp2px(getContext(), 250);
         if (mRectHeight == 0)
             mRectHeight = mRectWidth;
         mAnimDelayTime = (int) ((1.0f * mAnimTime * mMoveStepDistance) / mRectHeight);

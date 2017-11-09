@@ -324,12 +324,12 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
 
                     if (mOrientation == ScanUtil.ORIENTATION_PORTRAIT) {
                         data = new byte[previewData.length];
-//                        for (int y = 0; y < height; y++) {
-//                            for (int x = 0; x < width; x++) {
-//                                data[x * height + height - y - 1] = previewData[x + y * width];
-//                            }
-//                        }
-                        rotateYUV240SP(previewData, data, width, height);
+                        for (int y = 0; y < height; y++) {
+                            for (int x = 0; x < width; x++) {
+                                data[x * height + height - y - 1] = previewData[x + y * width];
+                            }
+                        }
+//                        rotateYUV240SP(previewData, data, width, height);
                         int tmp = width;
                         width = height;
                         height = tmp;
@@ -339,7 +339,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
                         return;
 
                     for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
-                        if (listener.onHandleScanData(data, width, height, rect) && mSpotAble && !getHandleScanDataListenerQueque().isEmpty())
+                        if (listener.onHandleScanData(previewData, data, width, height, rect) && mSpotAble && !getHandleScanDataListenerQueque().isEmpty())
                             break;
                     }
                 } catch (Exception e) {
@@ -418,7 +418,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
     };
 
     public interface IHandleScanDataListener {
-        Boolean onHandleScanData(byte[] data, int width, int height, Rect rect);
+        Boolean onHandleScanData(byte[] previewData, byte[] data, int width, int height, Rect rect);
 
         public Boolean isContinuity();//是否连续
     }

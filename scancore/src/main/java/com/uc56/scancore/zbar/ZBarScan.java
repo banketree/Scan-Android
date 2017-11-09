@@ -38,7 +38,7 @@ public class ZBarScan implements ScanView.IHandleScanDataListener {
     }
 
     @Override
-    public Boolean onHandleScanData(byte[] data, int width, int height, Rect rect) {
+    public Boolean onHandleScanData(final byte[] previewData, byte[] data, int width, int height, Rect rect) {
         String result = null;
         Image barcode = new Image(width, height, "Y800");
 
@@ -50,7 +50,7 @@ public class ZBarScan implements ScanView.IHandleScanDataListener {
         result = processData(barcode);
 
         if (TextUtils.isEmpty(result) && rect != null) //重复
-            return onHandleScanData(data, width, height, null);
+            return onHandleScanData(previewData, data, width, height, null);
 
         if (TextUtils.isEmpty(result))
             return false;

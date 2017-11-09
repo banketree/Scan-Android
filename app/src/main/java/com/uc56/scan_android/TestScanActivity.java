@@ -137,7 +137,7 @@ public class TestScanActivity extends AppCompatActivity {
 
     private void test() {
         try {
-            mQRCodeView.showBoxView(ScanView.Box_Type_IDCard);
+            mQRCodeView.showBoxView(ScanView.Box_Type_QR);
             mQRCodeView.getScanBoxView().setTipText("将证件放入框中");
             mQRCodeView.getScanBoxView().setOnlyDecodeScanBoxArea(true);
 
@@ -183,8 +183,13 @@ public class TestScanActivity extends AppCompatActivity {
             }
         }) {
             @Override
-            public Boolean onHandleScanData(final byte[] data, final int width, final int height, Rect rect) {
-                super.onHandleScanData(data, width, height, rect);
+            public Boolean onHandleScanData(final byte[] previewData, final byte[] desData, int width, int height, Rect rect) {
+                super.onHandleScanData(previewData, desData, width, height, rect);
+//                int temp = width;
+//                width = height;
+//                height = temp;
+                byte[] data = new byte[previewData.length];
+                ScanView.rotateYUV240SP(previewData, data, height, width);//旋转
 
                 try {
                     ByteArrayOutputStream baos;

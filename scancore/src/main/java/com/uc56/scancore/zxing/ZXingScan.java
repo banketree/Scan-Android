@@ -2,6 +2,7 @@ package com.uc56.scancore.zxing;
 
 import android.graphics.Rect;
 import android.text.TextUtils;
+
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.PlanarYUVLuminanceSource;
@@ -25,7 +26,7 @@ public class ZXingScan implements ScanView.IHandleScanDataListener {
     }
 
     @Override
-    public Boolean onHandleScanData(byte[] data, int width, int height, Rect rect) {
+    public Boolean onHandleScanData(final byte[] previewData, byte[] data, int width, int height, Rect rect) {
         String result = null;
         Result rawResult = null;
 
@@ -48,7 +49,7 @@ public class ZXingScan implements ScanView.IHandleScanDataListener {
         }
 
         if (TextUtils.isEmpty(result) && rect != null) //重复
-            return onHandleScanData(data, width, height, null);
+            return onHandleScanData(previewData, data, width, height, null);
 
         if (TextUtils.isEmpty(result))
             return false;

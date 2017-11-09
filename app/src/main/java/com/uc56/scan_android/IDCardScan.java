@@ -17,7 +17,7 @@ public class IDCardScan implements ScanView.IHandleScanDataListener {
     }
 
     @Override
-    public Boolean onHandleScanData(byte[] data, int width, int height, Rect rect) {
+    public Boolean onHandleScanData(final byte[] previewData, byte[] data, int width, int height, Rect rect) {
         return false;
     }
 
