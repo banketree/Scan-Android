@@ -15,8 +15,8 @@ public class BoxIDCardScanView extends BoxBarCodeView {
 
     @Override
     protected void afterInitCustomAttrs() {
-        mRectWidth = ScanUtil.dp2px(getContext(), 320);
-        mRectHeight = ScanUtil.dp2px(getContext(), 260);
+        mRectWidth = ScanUtil.dp2px(getContext(), 340);
+        mRectHeight = ScanUtil.dp2px(getContext(), 300);
         super.afterInitCustomAttrs();
     }
 }

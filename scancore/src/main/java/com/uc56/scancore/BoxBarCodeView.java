@@ -33,7 +33,7 @@ public class BoxBarCodeView extends BoxScanView {
         if (mRectWidth == 0)
             mRectWidth = ScanUtil.dp2px(getContext(), 200);
         if (mRectHeight == 0)
-            mRectHeight = ScanUtil.dp2px(getContext(), 140);
+            mRectHeight = ScanUtil.dp2px(getContext(), 100);
 
         mAnimDelayTime = (int) ((1.0f * mAnimTime * mMoveStepDistance) / mRectWidth);
 

@@ -3,8 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Scan-Android.iml" filepath="$PROJECT_DIR$/Scan-Android.iml" />
+      <module fileurl="file://D:\Project\Android\Scan-Android\Scan-Android.iml" filepath="D:\Project\Android\Scan-Android\Scan-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\Project\Android\Scan-Android\app\app.iml" filepath="D:\Project\Android\Scan-Android\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/scancore/scancore.iml" filepath="$PROJECT_DIR$/scancore/scancore.iml" />
+      <module fileurl="file://D:\Project\Android\Scan-Android\scancore\scancore.iml" filepath="D:\Project\Android\Scan-Android\scancore\scancore.iml" />
     </modules>
   </component>
 </project>
