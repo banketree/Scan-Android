@@ -26,6 +26,11 @@ public class IDCardScan implements ScanView.IHandleScanDataListener {
         return true;
     }
 
+    @Override
+    public void release() {
+
+    }
+
     public interface IIDCardResultListener {
         void onScanResult(String result);
     }

@@ -8,9 +8,12 @@ import android.graphics.RectF;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ class CameraZoomPreview extends SurfaceView {
     public void setCamera(Camera camera) {
         mCamera = camera;
     }
+
 
     //触碰放大缩小
     @Override
@@ -148,5 +152,49 @@ class CameraZoomPreview extends SurfaceView {
             return min;
         }
         return x;
+    }
+
+    //获取旋转
+    public int getDisplayOrientation(int cameraId) {
+        if (mCamera == null) {
+            //If we don't have a camera set there is no orientation so return dummy value
+            return 0;
+        }
+
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        if (cameraId == -1) {
+            Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, info);
+        } else {
+            Camera.getCameraInfo(cameraId, info);
+        }
+
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+
+        int rotation = display.getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        return result;
     }
 }

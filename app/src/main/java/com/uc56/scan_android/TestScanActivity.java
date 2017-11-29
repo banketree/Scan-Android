@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
 import com.uc56.scancore.ScanView;
 import com.uc56.scancore.zbar.ZBarScan;
 import com.uc56.scancore.zxing.QRCodeDecoder;
@@ -115,13 +116,13 @@ public class TestScanActivity extends AppCompatActivity {
                 break;
             case R.id.scan_barcode:
                 test();
-                mQRCodeView.showBoxView(ScanView.Box_Type_Bar);
+                mQRCodeView.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_bar, null));
                 mQRCodeView.getScanBoxView().setTipText("将条形码放入框中");
 
                 break;
             case R.id.scan_qrcode:
                 test();
-                mQRCodeView.showBoxView(ScanView.Box_Type_QR);
+                mQRCodeView.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_qrcode, null));
                 mQRCodeView.getScanBoxView().setTipText("将二维码放入框中");
                 break;
             case R.id.choose_qrcde_from_gallery:
@@ -137,7 +138,7 @@ public class TestScanActivity extends AppCompatActivity {
 
     private void test() {
         try {
-            mQRCodeView.showBoxView(ScanView.Box_Type_QR);
+            mQRCodeView.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_qrcode, null));
             mQRCodeView.getScanBoxView().setTipText("将证件放入框中");
             mQRCodeView.getScanBoxView().setOnlyDecodeScanBoxArea(true);
 
@@ -146,28 +147,19 @@ public class TestScanActivity extends AppCompatActivity {
         }
 
         mQRCodeView.removeHandleScanDataListenerAll();
-
         mQRCodeView.addHandleScanDataListener(new ZXingScan(new ZXingScan.IZXingResultListener() {
             @Override
-            public void onScanResult(final String result) {//二维码
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onScanQRCodeSuccess("ZXingScan:" + result);
-                    }
-                });
+            public boolean onScanResult(BarcodeFormat codeFormat, String result) {
+                onScanQRCodeSuccess("ZXingScan:" + result + "  " + codeFormat.name());
+                return false;
             }
         }));
 
         mQRCodeView.addHandleScanDataListener(new ZBarScan(new ZBarScan.IZbarResultListener() {
             @Override
-            public void onScanResult(final String result) {//条形码
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onScanQRCodeSuccess("ZBarScan:" + result);
-                    }
-                });
+            public boolean onScanResult(me.dm7.barcodescanner.zbar.BarcodeFormat codeFormat, String result) {
+                onScanQRCodeSuccess("ZBarScan:" + result + "  " + codeFormat.getName());
+                return false;
             }
         }));
 

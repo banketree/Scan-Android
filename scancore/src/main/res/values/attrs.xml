@@ -12,7 +12,7 @@
         <!-- 扫描框的宽度，默认值为200dp -->
         <attr name="sc_rectWidth" format="dimension|reference" />
         <!-- 条码扫样式描框的高度，默认值为140dp -->
-        <attr name="sc_barcodeRectHeight" format="dimension|reference" />
+        <attr name="sc_rectHeight" format="dimension|reference" />
         <!-- 除去扫描框，其余部分阴影颜色，默认值为#33FFFFFF -->
         <attr name="sc_maskColor" format="color|reference" />
         <!-- 扫描线的宽度，默认值为1dp -->
@@ -35,8 +35,6 @@
         <attr name="sc_isCenterVertical" format="boolean" />
         <!-- Toolbar的高度，当有设置sc_isCenterVertical属性时，通过该属性来修正有Toolbar时导致扫描框垂直居中的偏差，默认值为0dp -->
         <attr name="sc_toolbarHeight" format="dimension|reference" />
-        <!-- 是否是扫条形码，默认值为false -->
-        <attr name="sc_isBarcode" format="boolean" />
         <!-- 扫描二维码时的提示文案，默认值为null -->
         <attr name="sc_tipText" format="string|reference" />
         <!-- 提示文案字体大小，默认值为14sp -->
@@ -51,6 +49,8 @@
         <attr name="sc_isShowTipTextAsSingleLine" format="boolean" />
         <!-- 是否显示提示文案的背景，默认值为false -->
         <attr name="sc_isShowTipBackground" format="boolean" />
+        <!-- 是否水平滾動为false -->
+        <attr name="sc_isHorizontal" format="boolean" />
         <!-- 提示文案的背景色，默认值为#22000000 -->
         <attr name="sc_tipBackgroundColor" format="color|reference" />
         <!-- 扫描线是否来回移动，默认值为true -->

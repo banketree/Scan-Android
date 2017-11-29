@@ -17,11 +17,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 作者:王浩 邮件:bingoogolapple@gmail.com
- * 创建时间:16/4/8 下午11:22
- * 描述:解析二维码图片
- */
 public class QRCodeDecoder {
     public static final Map<DecodeHintType, Object> HINTS = new EnumMap<>(DecodeHintType.class);
 

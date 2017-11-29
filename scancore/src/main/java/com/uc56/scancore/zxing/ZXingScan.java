@@ -1,19 +1,61 @@
 package com.uc56.scancore.zxing;
 
-import android.graphics.Rect;
-import android.text.TextUtils;
 
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Rect;
+import android.hardware.Camera;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.util.Log;
+
+import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
+import com.google.zxing.DecodeHintType;
+import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.uc56.scancore.ScanView;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 public class ZXingScan implements ScanView.IHandleScanDataListener {
-    private MultiFormatReader mMultiFormatReader;
     private IZXingResultListener listener;
+    private boolean release = false;
+
+    private MultiFormatReader mMultiFormatReader;
+    public static final List<BarcodeFormat> ALL_FORMATS = new ArrayList<>();
+    private List<BarcodeFormat> mFormats;
+
+    static {
+        ALL_FORMATS.add(BarcodeFormat.AZTEC);
+        ALL_FORMATS.add(BarcodeFormat.CODABAR);
+        ALL_FORMATS.add(BarcodeFormat.CODE_39);
+        ALL_FORMATS.add(BarcodeFormat.CODE_93);
+        ALL_FORMATS.add(BarcodeFormat.CODE_128);
+        ALL_FORMATS.add(BarcodeFormat.DATA_MATRIX);
+        ALL_FORMATS.add(BarcodeFormat.EAN_8);
+        ALL_FORMATS.add(BarcodeFormat.EAN_13);
+        ALL_FORMATS.add(BarcodeFormat.ITF);
+        ALL_FORMATS.add(BarcodeFormat.MAXICODE);
+        ALL_FORMATS.add(BarcodeFormat.PDF_417);
+        ALL_FORMATS.add(BarcodeFormat.QR_CODE);
+        ALL_FORMATS.add(BarcodeFormat.RSS_14);
+        ALL_FORMATS.add(BarcodeFormat.RSS_EXPANDED);
+        ALL_FORMATS.add(BarcodeFormat.UPC_A);
+        ALL_FORMATS.add(BarcodeFormat.UPC_E);
+        ALL_FORMATS.add(BarcodeFormat.UPC_EAN_EXTENSION);
+    }
 
     public ZXingScan(IZXingResultListener listener) {
         this.listener = listener;
@@ -21,49 +63,102 @@ public class ZXingScan implements ScanView.IHandleScanDataListener {
     }
 
     private void initMultiFormatReader() {
+        Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
+        hints.put(DecodeHintType.POSSIBLE_FORMATS, getFormats());
         mMultiFormatReader = new MultiFormatReader();
-        mMultiFormatReader.setHints(QRCodeDecoder.HINTS);
+        mMultiFormatReader.setHints(hints);
     }
+
+    public void setFormats(List<BarcodeFormat> formats) {
+        mFormats = formats;
+        initMultiFormatReader();
+    }
+
+    public Collection<BarcodeFormat> getFormats() {
+        if (mFormats == null) {
+            mFormats = ALL_FORMATS;
+        }
+        return mFormats;
+    }
+
 
     @Override
     public Boolean onHandleScanData(final byte[] previewData, byte[] data, int width, int height, Rect rect) {
-        String result = null;
+        if (release)
+            return false;
         Result rawResult = null;
 
         try {
-            PlanarYUVLuminanceSource source = null;
-            if (rect != null) {
-                source = new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top, rect.width(), rect.height(), false);
-            } else {
-                source = new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false);
+            PlanarYUVLuminanceSource source = buildLuminanceSource(data, width, height, rect);
+
+            if (source != null) {
+                BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+                try {
+                    rawResult = mMultiFormatReader.decodeWithState(bitmap);
+                } catch (ReaderException re) { // continue
+                } catch (NullPointerException npe) { // This is terrible
+                } catch (ArrayIndexOutOfBoundsException aoe) {
+                } finally {
+                    mMultiFormatReader.reset();
+                }
+
+                if (rawResult == null) {
+                    LuminanceSource invertedSource = source.invert();
+                    bitmap = new BinaryBitmap(new HybridBinarizer(invertedSource));
+                    try {
+                        rawResult = mMultiFormatReader.decodeWithState(bitmap);
+                    } catch (NotFoundException e) { // continue
+                    } finally {
+                        mMultiFormatReader.reset();
+                    }
+                }
             }
-            rawResult = mMultiFormatReader.decodeWithState(new BinaryBitmap(new HybridBinarizer(source)));
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            mMultiFormatReader.reset();
         }
 
-        if (rawResult != null) {
-            result = rawResult.getText();
-        }
-
-        if (TextUtils.isEmpty(result) && rect != null) //重复
-            return onHandleScanData(previewData, data, width, height, null);
-
-        if (TextUtils.isEmpty(result))
+        if (rawResult == null)
             return false;
 
-        listener.onScanResult(result);
-        return true;
+//        if (TextUtils.isEmpty(rawResult.getText()) && rect != null) //重复
+//            return onHandleScanData(previewData, data, width, height, null);
+
+        if (TextUtils.isEmpty(rawResult.getText()))
+            return false;
+
+        return listener.onScanResult(rawResult.getBarcodeFormat(), rawResult.getText());
     }
 
     @Override
     public Boolean isContinuity() {
+        if (mMultiFormatReader == null)
+            return false;
         return true;
     }
 
+    @Override
+    public void release() {
+        release = true;
+    }
+
+    public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height, Rect rect) {
+        PlanarYUVLuminanceSource source = null;
+
+        try {
+            if (rect == null) {
+                source = new PlanarYUVLuminanceSource(data, width, height, 0, 0,
+                        width, height, false);
+            } else {
+                source = new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
+                        rect.width(), rect.height(), false);
+            }
+        } catch (Exception e) {
+        }
+
+        return source;
+    }
+
     public interface IZXingResultListener {
-        void onScanResult(String result);
+        boolean onScanResult(BarcodeFormat codeFormat, String result);
     }
 }
