@@ -96,6 +96,7 @@ public class ScanBoxView extends View {
         initCustomAttrs(context, attrs);
     }
 
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public ScanBoxView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);

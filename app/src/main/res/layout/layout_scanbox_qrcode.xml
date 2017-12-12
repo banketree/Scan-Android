@@ -20,7 +20,7 @@
     app:sc_maskColor="#33000000"
     app:sc_rectHeight="300dp"
     app:sc_rectWidth="300dp"
-    app:sc_scanLineColor="@color/red"
+    app:sc_scanLineColor="@android:color/holo_red_light"
     app:sc_scanLineMargin="0dp"
     app:sc_scanLineSize="0.5dp"
     app:sc_tipText="将二维码/条码放入框内，即可自动扫描"

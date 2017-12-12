@@ -29,6 +29,7 @@ final class CameraConfigurationManager {
     public void initFromCameraParameters(Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
 
+        if(parameters == null) return;
         if (CameraConfigurationManager.autoFocusAble(camera)) {
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
         }

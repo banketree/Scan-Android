@@ -229,10 +229,9 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
 
         startCamera();
         // 开始前先移除之前的任务
-        if (mOneShotPreviewCallbackTask != null) {
+        if (mOneShotPreviewCallbackTask != null)
             mHandler.removeCallbacks(mOneShotPreviewCallbackTask);
-            mHandler.postDelayed(mOneShotPreviewCallbackTask, delay);
-        }
+        mHandler.postDelayed(mOneShotPreviewCallbackTask, delay);
     }
 
     /**
@@ -249,7 +248,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
             } catch (Exception e) {
             }
         }
-        if (mHandler != null && mOneShotPreviewCallbackTask != null) {
+        if (mHandler != null) {
             mHandler.removeCallbacks(mOneShotPreviewCallbackTask);
         }
     }
