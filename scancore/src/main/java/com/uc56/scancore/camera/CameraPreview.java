@@ -2,31 +2,19 @@ package com.uc56.scancore.camera;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.hardware.Camera;
-import android.os.Build;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-
-import com.uc56.scancore.ScanUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
-public class CameraPreviewA extends CameraZoomPreview implements SurfaceHolder.Callback {
-    private static final String TAG = CameraPreviewA.class.getSimpleName();
+public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Callback {
+    private static final String TAG = CameraPreview.class.getSimpleName();
     private boolean mPreviewing = true;
     private boolean mSurfaceCreated = false;
     private CameraConfigurationManager mCameraConfigurationManager;
-    private float mAspectTolerance = 0.1f;
 
-    public CameraPreviewA(Context context) {
+    public CameraPreview(Context context) {
         super(context);
     }
 
@@ -37,20 +25,6 @@ public class CameraPreviewA extends CameraZoomPreview implements SurfaceHolder.C
         if (mCamera != null) {
             mCameraConfigurationManager = new CameraConfigurationManager(getContext());
             mCameraConfigurationManager.initFromCameraParameters(mCamera);
-
-            try {
-                //特殊处理
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) { //低于7.0
-                    Camera.Size optimalSize = getOptimalPreviewSize();
-                    Camera.Parameters parameters = mCamera.getParameters();
-                    parameters.setPreviewSize(optimalSize.width, optimalSize.height);
-//                    parameters.setPictureFormat(256);
-//                    parameters.setJpegQuality(100);
-                    mCamera.setParameters(parameters);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
             getHolder().addCallback(this);
             if (mPreviewing) {
@@ -174,53 +148,4 @@ public class CameraPreviewA extends CameraZoomPreview implements SurfaceHolder.C
             }
         }
     };
-
-    public void setAspectTolerance(float aspectTolerance) {
-        mAspectTolerance = aspectTolerance;
-    }
-
-    private Camera.Size getOptimalPreviewSize() {
-        if (mCamera == null) {
-            return null;
-        }
-
-        List<Camera.Size> sizes = mCamera.getParameters().getSupportedPreviewSizes();
-        int w = getWidth();
-        int h = getHeight();
-        if (ScanUtil.getScreenOrientation(getContext()) == Configuration.ORIENTATION_PORTRAIT) {
-            int portraitWidth = h;
-            h = w;
-            w = portraitWidth;
-        }
-
-        double targetRatio = (double) w / h;
-        if (sizes == null) return null;
-
-        Camera.Size optimalSize = null;
-        double minDiff = Double.MAX_VALUE;
-
-        int targetHeight = h;
-
-        // Try to find an size match aspect ratio and size
-        for (Camera.Size size : sizes) {
-            double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) > mAspectTolerance) continue;
-            if (Math.abs(size.height - targetHeight) < minDiff) {
-                optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
-            }
-        }
-
-        // Cannot find the one match the aspect ratio, ignore the requirement
-        if (optimalSize == null) {
-            minDiff = Double.MAX_VALUE;
-            for (Camera.Size size : sizes) {
-                if (Math.abs(size.height - targetHeight) < minDiff) {
-                    optimalSize = size;
-                    minDiff = Math.abs(size.height - targetHeight);
-                }
-            }
-        }
-        return optimalSize;
-    }
 }

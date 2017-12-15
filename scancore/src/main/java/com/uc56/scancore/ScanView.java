@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.uc56.scancore.camera.CameraPreviewA;
+import com.uc56.scancore.camera.CameraPreview;
 
 import java.util.Queue;
 import java.util.concurrent.*;
@@ -20,7 +20,7 @@ import me.dm7.barcodescanner.core.DisplayUtils;
 
 public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
     protected Camera mCamera;
-    protected CameraPreviewA mPreview;
+    protected CameraPreview mPreview;
     protected ScanBoxView mBoxView;
 
     private Queue<IHandleScanDataListener> handleScanDataListenerQueue = new ConcurrentLinkedQueue<IHandleScanDataListener>();
@@ -47,7 +47,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
 
     private void initView(Context context, AttributeSet attrs) {
         this.context = context;
-        mPreview = new CameraPreviewA(getContext());
+        mPreview = new CameraPreview(getContext());
         mPreview.setId(R.id.scan_camera_preview);
         addView(mPreview);
         mOrientation = ScanUtil.getOrientation(context);
@@ -181,7 +181,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
         }
     }
 
-    public CameraPreviewA getCameraPreView() {
+    public CameraPreview getCameraPreView() {
         return mPreview;
     }
 
