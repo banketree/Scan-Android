@@ -68,59 +68,70 @@ class CameraZoomPreview extends SurfaceView {
 
     private void handleZoom(boolean isZoomIn, Camera camera) {
         Log.e("Camera", "进入缩小放大方法");
-        Camera.Parameters params = camera.getParameters();
-        if (params.isZoomSupported()) {
-            int maxZoom = params.getMaxZoom();
-            int zoom = params.getZoom();
-            if (isZoomIn && zoom < maxZoom) {
-                Log.e("Camera", "进入放大方法zoom=" + zoom);
-                zoom++;
-            } else if (zoom > 0) {
-                Log.e("Camera", "进入缩小方法zoom=" + zoom);
-                zoom--;
+        if (camera == null || camera.getParameters() == null)
+            return;
+
+        try {
+            Camera.Parameters params = camera.getParameters();
+            if (params.isZoomSupported()) {
+                int maxZoom = params.getMaxZoom();
+                int zoom = params.getZoom();
+                if (isZoomIn && zoom < maxZoom) {
+                    Log.e("Camera", "进入放大方法zoom=" + zoom);
+                    zoom++;
+                } else if (zoom > 0) {
+                    Log.e("Camera", "进入缩小方法zoom=" + zoom);
+                    zoom--;
+                }
+                params.setZoom(zoom);
+                camera.setParameters(params);
+            } else {
+                Log.i("handleZoom", "zoom not supported");
             }
-            params.setZoom(zoom);
-            camera.setParameters(params);
-        } else {
-            Log.i("handleZoom", "zoom not supported");
+        } catch (Exception e) {
         }
     }
 
     private static void handleFocusMetering(MotionEvent event, Camera camera) {
         Log.e("Camera", "进入handleFocusMetering");
-        Camera.Parameters params = camera.getParameters();
-        Camera.Size previewSize = params.getPreviewSize();
-        Rect focusRect = calculateTapArea(event.getX(), event.getY(), 1f, previewSize);
-        Rect meteringRect = calculateTapArea(event.getX(), event.getY(), 1.5f, previewSize);
+        if (camera == null || camera.getParameters() == null)
+            return;
+        try {
+            Camera.Parameters params = camera.getParameters();
+            Camera.Size previewSize = params.getPreviewSize();
+            Rect focusRect = calculateTapArea(event.getX(), event.getY(), 1f, previewSize);
+            Rect meteringRect = calculateTapArea(event.getX(), event.getY(), 1.5f, previewSize);
 
-        camera.cancelAutoFocus();
+            camera.cancelAutoFocus();
 
-        if (params.getMaxNumFocusAreas() > 0) {
-            List<Camera.Area> focusAreas = new ArrayList<>();
-            focusAreas.add(new Camera.Area(focusRect, 800));
-            params.setFocusAreas(focusAreas);
-        } else {
-            Log.i("handleZoom", "focus areas not supported");
-        }
-        if (params.getMaxNumMeteringAreas() > 0) {
-            List<Camera.Area> meteringAreas = new ArrayList<>();
-            meteringAreas.add(new Camera.Area(meteringRect, 800));
-            params.setMeteringAreas(meteringAreas);
-        } else {
-            Log.i("handleZoom", "metering areas not supported");
-        }
-        final String currentFocusMode = params.getFocusMode();
-        params.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
-        camera.setParameters(params);
-
-        camera.autoFocus(new Camera.AutoFocusCallback() {
-            @Override
-            public void onAutoFocus(boolean success, Camera camera) {
-                Camera.Parameters params = camera.getParameters();
-                params.setFocusMode(currentFocusMode);
-                camera.setParameters(params);
+            if (params.getMaxNumFocusAreas() > 0) {
+                List<Camera.Area> focusAreas = new ArrayList<>();
+                focusAreas.add(new Camera.Area(focusRect, 800));
+                params.setFocusAreas(focusAreas);
+            } else {
+                Log.i("handleZoom", "focus areas not supported");
             }
-        });
+            if (params.getMaxNumMeteringAreas() > 0) {
+                List<Camera.Area> meteringAreas = new ArrayList<>();
+                meteringAreas.add(new Camera.Area(meteringRect, 800));
+                params.setMeteringAreas(meteringAreas);
+            } else {
+                Log.i("handleZoom", "metering areas not supported");
+            }
+            final String currentFocusMode = params.getFocusMode();
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
+            camera.setParameters(params);
+
+            camera.autoFocus(new Camera.AutoFocusCallback() {
+                @Override
+                public void onAutoFocus(boolean success, Camera camera) {
+                    Camera.Parameters params = camera.getParameters();
+                    params.setFocusMode(currentFocusMode);
+                    camera.setParameters(params);
+                }
+            });
+        } catch (Exception e) {
+        }
     }
 
     private static float getFingerSpacing(MotionEvent event) {
