@@ -227,11 +227,14 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
     public void startSpotDelay(int delay) {
         mSpotAble = true;
 
-        startCamera();
-        // 开始前先移除之前的任务
-        if (mOneShotPreviewCallbackTask != null)
-            mHandler.removeCallbacks(mOneShotPreviewCallbackTask);
-        mHandler.postDelayed(mOneShotPreviewCallbackTask, delay);
+        try {
+            startCamera();
+            // 开始前先移除之前的任务
+            if (mOneShotPreviewCallbackTask != null)
+                mHandler.removeCallbacks(mOneShotPreviewCallbackTask);
+            mHandler.postDelayed(mOneShotPreviewCallbackTask, delay);
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -257,16 +260,22 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
      * 停止识别，并且隐藏扫描框
      */
     public void stopSpotAndHiddenRect() {
-        stopSpot();
-        hiddenScanRect();
+        try {
+            stopSpot();
+            hiddenScanRect();
+        } catch (Exception e) {
+        }
     }
 
     /**
      * 显示扫描框，并且延迟1.5秒后开始识别
      */
     public void startSpotAndShowRect() {
-        startSpot();
-        showScanRect();
+        try {
+            startSpot();
+            showScanRect();
+        } catch (Exception e) {
+        }
     }
 
     /**
