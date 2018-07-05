@@ -23,6 +23,7 @@ class CameraZoomPreview extends SurfaceView {
     private static final String TAG = CameraZoomPreview.class.getSimpleName();
     private float oldDist = 1f;
     protected Camera mCamera;
+    private long lastZoomTime = 0L;
 
     public CameraZoomPreview(Context context) {
         super(context);
@@ -67,7 +68,11 @@ class CameraZoomPreview extends SurfaceView {
     }
 
     private void handleZoom(boolean isZoomIn, Camera camera) {
-        Log.e("Camera", "进入缩小放大方法");
+        Log.i("Camera", "进入缩小放大方法");
+        if ((lastZoomTime + 50) >= System.currentTimeMillis())
+            return;
+        lastZoomTime = System.currentTimeMillis();
+
         if (camera == null || camera.getParameters() == null)
             return;
 
