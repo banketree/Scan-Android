@@ -216,7 +216,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
      * 延迟0.5秒后开始识别
      */
     public void startSpot() {
-        startSpotDelay(0);
+        startSpotDelay(500);
     }
 
     /**

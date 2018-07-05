@@ -46,12 +46,7 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
             return;
         }
         stopCameraPreview();
-
-        post(new Runnable() {
-            public void run() {
-                showCameraPreview();
-            }
-        });
+        showCameraPreview();
     }
 
     @Override
@@ -62,17 +57,21 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
 
     public void showCameraPreview() {
         if (mCamera != null) {
-            try {
-                mPreviewing = true;
-                mCamera.setPreviewDisplay(getHolder());
+            post(new Runnable() {
+                public void run() {
+                    try {
+                        mPreviewing = true;
+                        mCamera.setPreviewDisplay(getHolder());
 
-                mCameraConfigurationManager.setDesiredCameraParameters(mCamera);
-                mCamera.startPreview();
+                        mCameraConfigurationManager.setDesiredCameraParameters(mCamera);
+                        mCamera.startPreview();
 
-                mCamera.autoFocus(autoFocusCB);
-            } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
-            }
+                        mCamera.autoFocus(autoFocusCB);
+                    } catch (Exception e) {
+                        Log.e(TAG, e.toString(), e);
+                    }
+                }
+            });
         }
     }
 
@@ -142,9 +141,9 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
     Camera.AutoFocusCallback autoFocusCB = new Camera.AutoFocusCallback() {
         public void onAutoFocus(boolean success, Camera camera) {
             if (success) {
-                postDelayed(doAutoFocus, 1000);
+                postDelayed(doAutoFocus, 1000L);
             } else {
-                postDelayed(doAutoFocus, 100);
+                postDelayed(doAutoFocus, 500L);
             }
         }
     };
