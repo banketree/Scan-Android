@@ -31,6 +31,8 @@
 
         <activity android:name=".TestScanActivity" />
 
+        <activity android:name=".camera2.Camera2Activity" />
+
         <activity
             android:name=".TestGeneratectivity"
             android:screenOrientation="portrait" />

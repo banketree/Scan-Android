@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.uc56.scan_android.camera2.Camera2Activity;
+
 import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -30,7 +32,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             case R.id.test_generate_qrcode:
                 startActivity(new Intent(this, TestGeneratectivity.class));
                 break;
+            case R.id.tv_test_camera2:
+                startActivity(new Intent(this, Camera2Activity.class));
+                break;
         }
+
+
     }
 
     @Override

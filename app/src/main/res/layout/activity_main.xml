@@ -15,4 +15,9 @@
         style="@style/MatchWrapTv"
         android:text="测试生成和识别图片二维码"/>
 
+    <TextView
+        android:id="@+id/tv_test_camera2"
+        style="@style/MatchWrapTv"
+        android:text="测试Camera2"/>
+
 </LinearLayout>
