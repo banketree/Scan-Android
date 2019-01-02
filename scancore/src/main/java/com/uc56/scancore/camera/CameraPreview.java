@@ -63,10 +63,29 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
                 public void run() {
                     try {
                         mPreviewing = true;
+                        Camera.Parameters parameters = mCamera.getParameters();
+                        String parametersFlattened = parameters == null ? null : parameters.flatten(); // Save these, temporarily
+                        try {
+                            mCameraConfigurationManager.setDesiredCameraParameters(mCamera, false);
+                        } catch (Exception e) {
+                            // Driver failed
+                            Log.w(TAG, "Camera rejected parameters. Setting only minimal safe-mode parameters");
+                            Log.i(TAG, "Resetting to saved camera params: " + parametersFlattened);
+                            // Reset:
+                            if (parametersFlattened != null) {
+                                parameters = mCamera.getParameters();
+                                parameters.unflatten(parametersFlattened);
+                                try {
+                                    mCamera.setParameters(parameters);
+                                    mCameraConfigurationManager.setDesiredCameraParameters(mCamera, true);
+                                } catch (RuntimeException re2) {
+                                    // Well, darn. Give up
+                                    Log.w(TAG, "Camera rejected even safe-mode parameters! No configuration");
+                                }
+                            }
+                        }
                         mCamera.setPreviewDisplay(getHolder());
-                        mCameraConfigurationManager.setDesiredCameraParameters(mCamera);
                         mCamera.startPreview();
-
                         mCamera.autoFocus(autoFocusCB);
                         startAutoFocusTimer();
                     } catch (Exception e) {

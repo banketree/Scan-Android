@@ -1,9 +1,12 @@
 package com.uc56.scancore.camera;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.Camera;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
@@ -15,6 +18,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 final class CameraConfigurationManager {
+    private static final String TAG = CameraConfigurationManager.class.getCanonicalName();
+
     private static final int TEN_DESIRED_ZOOM = 27;
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     private final Context mContext;
@@ -29,7 +34,7 @@ final class CameraConfigurationManager {
     public void initFromCameraParameters(Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
 
-        if(parameters == null) return;
+        if (parameters == null) return;
         if (CameraConfigurationManager.autoFocusAble(camera)) {
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
         }
@@ -66,12 +71,35 @@ final class CameraConfigurationManager {
         return mCameraResolution;
     }
 
-    public void setDesiredCameraParameters(Camera camera) {
+    public void setDesiredCameraParameters(Camera camera, boolean safeMode) {
         Camera.Parameters parameters = camera.getParameters();
         parameters.setPreviewSize(mPreviewResolution.x, mPreviewResolution.y);
         setZoom(parameters);
-
         camera.setDisplayOrientation(getDisplayOrientation());
+        if (parameters == null) {
+            Log.w(TAG, "Device error: no camera parameters are available. Proceeding without configuration.");
+            return;
+        }
+        Log.i(TAG, "Initial camera parameters: " + parameters.flatten());
+        if (safeMode) {
+            Log.w(TAG, "In camera config safe mode -- most settings will not be honored");
+        }
+        CameraConfigurationUtils.setFocus(
+                parameters, true, true,
+                safeMode);
+
+        if (!safeMode) {
+            //CameraConfigurationUtils.setInvertColor(parameters); //反白
+            CameraConfigurationUtils.setBarcodeSceneMode(parameters);
+            CameraConfigurationUtils.setVideoStabilization(parameters);
+            CameraConfigurationUtils.setFocusArea(parameters);
+            CameraConfigurationUtils.setMetering(parameters);
+
+            //SetRecordingHint to true also a workaround for low framerate on Nexus 4
+            //https://stackoverflow.com/questions/14131900/extreme-camera-lag-on-nexus-4
+            parameters.setRecordingHint(true);
+        }
+
         camera.setParameters(parameters);
     }
 
@@ -255,6 +283,4 @@ final class CameraConfigurationManager {
             parameters.set("taking-picture-zoom", tenDesiredZoom);
         }
     }
-
-
 }
