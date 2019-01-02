@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.Camera;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -13,6 +14,7 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
     private boolean mPreviewing = true;
     private boolean mSurfaceCreated = false;
     private CameraConfigurationManager mCameraConfigurationManager;
+    private CountDownTimer countDownTimer;
 
     public CameraPreview(Context context) {
         super(context);
@@ -62,11 +64,11 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
                     try {
                         mPreviewing = true;
                         mCamera.setPreviewDisplay(getHolder());
-
                         mCameraConfigurationManager.setDesiredCameraParameters(mCamera);
                         mCamera.startPreview();
 
                         mCamera.autoFocus(autoFocusCB);
+                        startAutoFocusTimer();
                     } catch (Exception e) {
                         Log.e(TAG, e.toString(), e);
                     }
@@ -79,7 +81,6 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
         if (mCamera != null) {
             try {
                 removeCallbacks(doAutoFocus);
-
                 mPreviewing = false;
                 mCamera.cancelAutoFocus();
                 mCamera.setOneShotPreviewCallback(null);
@@ -87,6 +88,10 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
             } catch (Exception e) {
                 Log.e(TAG, e.toString(), e);
             }
+        }
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
         }
     }
 
@@ -147,4 +152,22 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
             }
         }
     };
+
+    private long interVal = 2000L;
+
+    private void startAutoFocusTimer() {
+        if (countDownTimer != null)
+            countDownTimer.cancel();
+        countDownTimer = null;
+        countDownTimer = new CountDownTimer(Integer.MAX_VALUE, interVal) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                post(doAutoFocus);
+            }
+
+            public void onFinish() {
+            }
+        };
+        countDownTimer.start();
+    }
 }
