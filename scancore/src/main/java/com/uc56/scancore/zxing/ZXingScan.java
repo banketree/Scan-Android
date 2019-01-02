@@ -26,8 +26,11 @@ import com.uc56.scancore.ScanView;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ZXingScan implements ScanView.IHandleScanDataListener {
     private IZXingResultListener listener;
@@ -38,22 +41,27 @@ public class ZXingScan implements ScanView.IHandleScanDataListener {
     private List<BarcodeFormat> mFormats;
 
     static {
-        ALL_FORMATS.add(BarcodeFormat.AZTEC);
-        ALL_FORMATS.add(BarcodeFormat.CODABAR);
+        //一维码：商品
+        ALL_FORMATS.add(BarcodeFormat.UPC_A);
+        ALL_FORMATS.add(BarcodeFormat.UPC_E);
+        ALL_FORMATS.add(BarcodeFormat.EAN_13);
+        ALL_FORMATS.add(BarcodeFormat.EAN_8);
+        ALL_FORMATS.add(BarcodeFormat.RSS_14);
+        ALL_FORMATS.add(BarcodeFormat.RSS_EXPANDED);
+        //一维码：工业
         ALL_FORMATS.add(BarcodeFormat.CODE_39);
         ALL_FORMATS.add(BarcodeFormat.CODE_93);
         ALL_FORMATS.add(BarcodeFormat.CODE_128);
-        ALL_FORMATS.add(BarcodeFormat.DATA_MATRIX);
-        ALL_FORMATS.add(BarcodeFormat.EAN_8);
-        ALL_FORMATS.add(BarcodeFormat.EAN_13);
         ALL_FORMATS.add(BarcodeFormat.ITF);
+        ALL_FORMATS.add(BarcodeFormat.CODABAR);
+
+        //二维码
+        ALL_FORMATS.add(BarcodeFormat.QR_CODE);//二维码
+
+        ALL_FORMATS.add(BarcodeFormat.AZTEC); //Aztec
+        ALL_FORMATS.add(BarcodeFormat.DATA_MATRIX);//Data Matrix
         ALL_FORMATS.add(BarcodeFormat.MAXICODE);
-        ALL_FORMATS.add(BarcodeFormat.PDF_417);
-        ALL_FORMATS.add(BarcodeFormat.QR_CODE);
-        ALL_FORMATS.add(BarcodeFormat.RSS_14);
-        ALL_FORMATS.add(BarcodeFormat.RSS_EXPANDED);
-        ALL_FORMATS.add(BarcodeFormat.UPC_A);
-        ALL_FORMATS.add(BarcodeFormat.UPC_E);
+        ALL_FORMATS.add(BarcodeFormat.PDF_417);//PDF 417
         ALL_FORMATS.add(BarcodeFormat.UPC_EAN_EXTENSION);
     }
 
@@ -80,7 +88,6 @@ public class ZXingScan implements ScanView.IHandleScanDataListener {
         }
         return mFormats;
     }
-
 
     @Override
     public Boolean onHandleScanData(final byte[] previewData, byte[] data, int width, int height, Rect rect) {

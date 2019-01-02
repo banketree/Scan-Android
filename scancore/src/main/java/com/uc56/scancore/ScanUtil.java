@@ -13,6 +13,8 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.google.zxing.BarcodeFormat;
+
 public class ScanUtil {
     public static final int ORIENTATION_PORTRAIT = 0;
     public static final int ORIENTATION_LANDSCAPE = 1;
@@ -83,21 +85,44 @@ public class ScanUtil {
         return outputBitmap;
     }
 
-    public static int getScreenOrientation(Context context)
-    {
+    public static int getScreenOrientation(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
 
         int orientation = Configuration.ORIENTATION_UNDEFINED;
-        if(display.getWidth()==display.getHeight()){
+        if (display.getWidth() == display.getHeight()) {
             orientation = Configuration.ORIENTATION_SQUARE;
-        } else{
-            if(display.getWidth() < display.getHeight()){
+        } else {
+            if (display.getWidth() < display.getHeight()) {
                 orientation = Configuration.ORIENTATION_PORTRAIT;
-            }else {
+            } else {
                 orientation = Configuration.ORIENTATION_LANDSCAPE;
             }
         }
         return orientation;
+    }
+
+    /*
+     * 二维码
+     * */
+    public static boolean isQrcode(BarcodeFormat codeFormat) {
+        boolean result = false;
+        if (codeFormat == BarcodeFormat.QR_CODE || codeFormat == BarcodeFormat.PDF_417 || codeFormat == BarcodeFormat.MAXICODE || codeFormat == BarcodeFormat.DATA_MATRIX || codeFormat == BarcodeFormat.AZTEC) {
+            result = true;
+        }
+
+        return result;
+    }
+
+    /*
+     * 二维码
+     * */
+    public static boolean isQrcode(me.dm7.barcodescanner.zbar.BarcodeFormat codeFormat) {
+        boolean result = false;
+        if (codeFormat == me.dm7.barcodescanner.zbar.BarcodeFormat.QRCODE || codeFormat == me.dm7.barcodescanner.zbar.BarcodeFormat.PDF417) {
+            result = true;
+        }
+
+        return result;
     }
 }
