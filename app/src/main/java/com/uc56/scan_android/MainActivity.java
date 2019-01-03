@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.uc56.scan_android.camera2.Camera2Activity;
+import com.uc56.scan_android.test2.Camera2Activity;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 startActivity(new Intent(this, TestGeneratectivity.class));
                 break;
             case R.id.tv_test_camera2:
-                startActivity(new Intent(this, Camera2Activity.class));
+                startActivity(new Intent(this, com.uc56.scan_android.camera2.MainActivity.class));
                 break;
         }
 

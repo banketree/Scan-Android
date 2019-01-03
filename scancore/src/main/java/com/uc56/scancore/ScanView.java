@@ -23,7 +23,7 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
     protected CameraPreview mPreview;
     protected ScanBoxView mBoxView;
 
-    private Queue<IHandleScanDataListener> handleScanDataListenerQueue = new ConcurrentLinkedQueue<IHandleScanDataListener>();
+    private volatile Queue<IHandleScanDataListener> handleScanDataListenerQueue = new ConcurrentLinkedQueue<IHandleScanDataListener>();
 
     protected Handler mHandler;
     protected boolean mSpotAble = false;

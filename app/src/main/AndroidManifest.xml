@@ -32,7 +32,9 @@
 
         <activity android:name=".TestScanActivity" />
 
-        <activity android:name=".camera2.Camera2Activity" />
+        <activity android:name=".test2.Camera2Activity" />
+
+        <activity android:name=".camera2.MainActivity" />
 
         <activity
             android:name=".TestGeneratectivity"

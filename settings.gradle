@@ -1,1 +1,1 @@
-include ':app', ':scancore'
+include ':app', ':scancore', ':camera2'
