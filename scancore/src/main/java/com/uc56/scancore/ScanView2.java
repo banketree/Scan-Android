@@ -52,7 +52,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
         addView(containerFrameLayout);
         layoutParams.addRule(RelativeLayout.ALIGN_TOP, containerFrameLayout.getId());
         layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, containerFrameLayout.getId());
-        showCameraByNew();
+        showCameraByOld();
     }
 
     public void showCameraByOld() {
@@ -227,6 +227,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
             stopSpot();
             hiddenScanRect();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -296,7 +297,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
                         if (format == ImageFormat.JPEG) {
                             handleNewCameraPreviewData(iCameraP, previewData, format, previewWidth, previewHeight, rect);
                         } else {
-                            handleNewCameraPreviewData(iCameraP, previewData, format, previewWidth, previewHeight, rect);
+                            handleOldCameraPreviewData(iCameraP, previewData, format, previewWidth, previewHeight, rect);
                         }
                     } catch (Exception e) {
                     }

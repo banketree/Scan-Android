@@ -40,4 +40,12 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentRight="true" />
+
+
+    <TextView
+        android:id="@+id/tv_scan_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:textColor="@android:color/white" />
 </RelativeLayout>

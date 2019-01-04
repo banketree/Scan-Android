@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -38,6 +39,7 @@ public class TestScan2Activity extends AppCompatActivity {
 
     private ScanView2 scanView2;
     private ImageView imageView;
+    private TextView scanResultTextView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,7 @@ public class TestScan2Activity extends AppCompatActivity {
 
         scanView2 = (ScanView2) findViewById(R.id.zxingview);
         imageView = (ImageView) findViewById(R.id.img_camera);
+        scanResultTextView = (TextView) findViewById(R.id.tv_scan_code);
         test();
     }
 
@@ -78,11 +81,17 @@ public class TestScan2Activity extends AppCompatActivity {
         vibrator.vibrate(200);
     }
 
-    public void onScanQRCodeSuccess(String result) {
+    public void onScanQRCodeSuccess(final String result) {
         Log.i(TAG, "result:" + result);
-        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
-        vibrate();
-        scanView2.startSpot();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+//                Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+                vibrate();
+                scanView2.startSpot();
+                scanResultTextView.setText(result);
+            }
+        });
     }
 
 
