@@ -96,6 +96,8 @@ public class CameraView extends FrameLayout {
 
     private final DisplayOrientationDetector mDisplayOrientationDetector;
 
+    public static boolean isRequireCamera1 = false; //为识别 ocr
+
     public CameraView(Context context) {
         this(context, null);
     }
@@ -115,7 +117,8 @@ public class CameraView extends FrameLayout {
         // Internal setup
         final PreviewImpl preview = createPreviewImpl(context);
         mCallbacks = new CallbackBridge();
-        if (Build.VERSION.SDK_INT < 21) {
+        //目前发现 ocr 无法识别
+        if (Build.VERSION.SDK_INT < 21 || isRequireCamera1) {
             mImpl = new Camera1(mCallbacks, preview);
         } else if (Build.VERSION.SDK_INT < 23) {
             mImpl = new Camera2(mCallbacks, preview, context.getApplicationContext());
@@ -143,6 +146,10 @@ public class CameraView extends FrameLayout {
                 mImpl.setDisplayOrientation(displayOrientation);
             }
         };
+    }
+
+    public boolean isCamera1() {
+        return mImpl != null && mImpl instanceof Camera1;
     }
 
     @NonNull

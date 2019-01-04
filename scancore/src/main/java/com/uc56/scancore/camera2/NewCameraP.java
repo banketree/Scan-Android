@@ -29,6 +29,18 @@ public class NewCameraP implements ICameraP {
         cameraView.addCallback(callback);
     }
 
+    public boolean isCamera1() {
+        return cameraView.isCamera1();
+    }
+
+    public static boolean isRequireCamera1() {
+        return CameraView.isRequireCamera1;
+    }
+
+    public static void setRequireCamera1(boolean requireCamera1) {
+        CameraView.isRequireCamera1 = requireCamera1;
+    }
+
     @Override
     public View getCameraPreView() {
         return cameraView;

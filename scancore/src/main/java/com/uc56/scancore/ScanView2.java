@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import com.google.android.cameraview.CameraView;
 import com.uc56.scancore.Interface.IHandleScanDataListener;
 import com.uc56.scancore.Interface.ICameraP;
 import com.uc56.scancore.Interface.ICameraPreviewFrame;
@@ -66,6 +67,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
     private void addCameraView(boolean newView) {
         boolean first = iCameraP == null;
         removeCameraView();
+        //setRequireCamera1(true); //目前发现 ocr 识别有问题
         iCameraP = newView ? new NewCameraP(context) : new OldCameraP(context);
         iCameraP.setCameraPreviewFrame(this);
         containerFrameLayout.addView(iCameraP.getCameraPreView(), containerLayoutParams);
@@ -81,6 +83,15 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
 
     public boolean isCameraNewView() {
         return iCameraP != null && (iCameraP instanceof NewCameraP);
+    }
+
+    public boolean isCamera1() {
+        if (isCameraNewView()) ((NewCameraP) iCameraP).isCamera1();
+        return true;
+    }
+
+    public void setRequireCamera1(boolean requireCamera1) {
+        CameraView.isRequireCamera1 = requireCamera1;
     }
 
     public void addScanBoxView(View view) {
@@ -257,6 +268,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 销毁二维码扫描控件
      */
     public void onDestroy() {
+        setRequireCamera1(false);
         stopSpot();
         iCameraP.onDestroy();
     }
@@ -293,8 +305,10 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
             mProcessDataTask = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
+                    if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty()) {
+                        cancelProcessDataTask();
                         return;
+                    }
 
                     try { //数据处理
                         if (format == ImageFormat.JPEG) {
@@ -303,11 +317,14 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
                             handleOldCameraPreviewData(iCameraP, previewData, format, previewWidth, previewHeight, rect);
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
                     try { //是否继续扫描
-                        if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
+                        if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty()) {
+                            cancelProcessDataTask();
                             return;
+                        }
 
                         boolean isContinuity = false;
                         for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
@@ -317,8 +334,10 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
                             }
                         }
 
-                        if (!isContinuity)
+                        if (!isContinuity) {
+                            cancelProcessDataTask();
                             return;
+                        }
                     } catch (Exception e) {
                     }
                     try { //继续扫描

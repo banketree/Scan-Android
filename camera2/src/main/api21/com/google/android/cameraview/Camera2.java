@@ -525,7 +525,6 @@ class Camera2 extends CameraViewImpl {
     }
 
     private void initCallbackImageDataReader(int width, int height) {
-
         if (mCallbackImageDataReader != null) {
             mCallbackImageDataReader.close();
         }

@@ -209,4 +209,25 @@ public class ScanUtil {
 //        corpBitmap = null;
         return corpBitmap;
     }
+
+    /**
+     * RGB转换成YCbCr
+     *
+     * @param R 0-255的数值表示R
+     * @param G 0-255的数值表示G
+     * @param B 0-255的数值表示B
+     * @return yuv数组，依次Y，U，
+     */
+    private byte[] RGBToYUV(int R, int G, int B) {
+        int[] rgbs = new int[]{R, G, B};
+        byte[] yuvs = new byte[rgbs.length];
+        for (int i = 0; i < rgbs.length; i++) {//限制RGB输入值只能是0-255
+            if (rgbs[i] < 0) rgbs[i] = -rgbs[i];
+            if (rgbs[i] > 255) rgbs[i] = rgbs[i] % 256;
+        }
+        yuvs[0] = (byte) (0.257 * rgbs[0] + 0.504 * rgbs[1] + 0.098 * rgbs[2] + 16);
+        yuvs[1] = (byte) (-0.148 * rgbs[0] - 0.291 * rgbs[1] + 0.439 * rgbs[2] + 128);
+        yuvs[2] = (byte) (0.439 * rgbs[0] - 0.368 * rgbs[1] - 0.071 * rgbs[2] + 128);
+        return yuvs;
+    }
 }
