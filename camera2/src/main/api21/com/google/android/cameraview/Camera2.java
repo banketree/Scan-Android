@@ -214,9 +214,12 @@ class Camera2 extends CameraViewImpl {
 
     private Context context;
 
+    private Handler handler;
+
     Camera2(Callback callback, PreviewImpl preview, Context context) {
         super(callback, preview);
         this.context = context;
+        handler = new Handler();
         mCameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         mPreview.setCallback(new PreviewImpl.Callback() {
             @Override
@@ -576,10 +579,13 @@ class Camera2 extends CameraViewImpl {
         }
         Size previewSize = chooseOptimalSize();
         mPreview.setBufferSize(previewSize.getWidth(), previewSize.getHeight());
-
-        new Handler().postDelayed(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                if (!isCameraOpened() || !mPreview.isReady() || mImageReader == null) {
+                    return;
+                }
+
                 try {
                     Surface surface = mPreview.getSurface();
                     mPreviewRequestBuilder = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
@@ -602,7 +608,9 @@ class Camera2 extends CameraViewImpl {
                                 mSessionCallback, null);
                     }
                 } catch (CameraAccessException e) {
-                    throw new RuntimeException("Failed to start camera session");
+                    Log.e(TAG, "run: Failed to start camera session", e);
+                } catch (Exception e) {
+                    Log.e(TAG, "run: Failed to start camera session", e);
                 }
             }
         }, 500);
