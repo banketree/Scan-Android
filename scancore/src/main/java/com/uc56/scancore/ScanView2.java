@@ -28,7 +28,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
     private volatile Queue<IHandleScanDataListener> handleScanDataListenerQueue = new ConcurrentLinkedQueue<IHandleScanDataListener>();
 
     protected volatile boolean mSpotAble = false;
-    protected Thread mProcessDataTask;
+    protected volatile Thread mProcessDataTask;
     LayoutParams layoutParams;
     private Context context;
     private ICameraP iCameraP;//新老 camera 版本
@@ -74,12 +74,9 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
     public void removeCameraView() {
         if (iCameraP == null) return;
         containerFrameLayout.removeView(iCameraP.getCameraPreView());
+        iCameraP.stopSpot();
         iCameraP.stopCamera();
         iCameraP.onDestroy();
-        try {
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean isCameraNewView() {
@@ -277,6 +274,8 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
         mProcessDataTask = null;
     }
 
+    private long lastPreviewFrameTime = 0;//上次时间
+
     @Override
     public void onPreviewFrame(final ICameraP iCameraP, final byte[] previewData, final int format, final int previewWidth, final int previewHeight) {
         try {
@@ -285,6 +284,10 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (iCameraP instanceof NewCameraP && System.currentTimeMillis() - lastPreviewFrameTime <= 300) {//防止过快
+            return;
+        }
+        lastPreviewFrameTime = System.currentTimeMillis();
         try {
             final Rect rect = mBoxView != null ? mBoxView.getScanBoxAreaRect(previewWidth, previewHeight) : null;
             mProcessDataTask = new Thread(new Runnable() {
@@ -329,6 +332,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
             });
             mProcessDataTask.start();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
