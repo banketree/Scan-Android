@@ -118,9 +118,9 @@ public class CameraView extends FrameLayout {
         if (Build.VERSION.SDK_INT < 21) {
             mImpl = new Camera1(mCallbacks, preview);
         } else if (Build.VERSION.SDK_INT < 23) {
-            mImpl = new Camera2(mCallbacks, preview, context);
+            mImpl = new Camera2(mCallbacks, preview, context.getApplicationContext());
         } else {
-            mImpl = new Camera2Api23(mCallbacks, preview, context);
+            mImpl = new Camera2Api23(mCallbacks, preview, context.getApplicationContext());
         }
         // Attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CameraView, defStyleAttr,
@@ -148,11 +148,14 @@ public class CameraView extends FrameLayout {
     @NonNull
     private PreviewImpl createPreviewImpl(Context context) {
         PreviewImpl preview;
-        if (Build.VERSION.SDK_INT < 14) {
+        if (Build.VERSION.SDK_INT < 20) {
             preview = new SurfaceViewPreview(context, this);
-        } else {
+        } else if (Build.VERSION.SDK_INT < 24) {
             preview = new TextureViewPreview(context, this);
+        } else {
+            preview = new SurfaceViewPreview(context, this);
         }
+
         return preview;
     }
 
@@ -435,7 +438,11 @@ public class CameraView extends FrameLayout {
      * onPictureTaken(CameraView, byte[])}.
      */
     public void takePicture() {
-        mImpl.takePicture();
+        try {
+            mImpl.takePicture();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private class CallbackBridge implements CameraViewImpl.Callback {

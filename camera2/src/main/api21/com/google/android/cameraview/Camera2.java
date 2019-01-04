@@ -34,6 +34,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -42,6 +43,7 @@ import android.view.Surface;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -481,9 +483,12 @@ class Camera2 extends CameraViewImpl {
         }
         mPictureSizes.clear();
         collectPictureSizes(mPictureSizes, map);
-        for (AspectRatio ratio : mPreviewSizes.ratios()) {
+
+        Iterator<AspectRatio> iterator = mPreviewSizes.ratios().iterator();
+        while (iterator.hasNext()) {
+            AspectRatio ratio = iterator.next();
             if (!mPictureSizes.ratios().contains(ratio)) {
-                mPreviewSizes.remove(ratio);
+                iterator.remove();
             }
         }
 
@@ -572,30 +577,35 @@ class Camera2 extends CameraViewImpl {
         Size previewSize = chooseOptimalSize();
         mPreview.setBufferSize(previewSize.getWidth(), previewSize.getHeight());
 
-        Surface surface = mPreview.getSurface();
-        try {
-            mPreviewRequestBuilder = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            mPreviewRequestBuilder.addTarget(surface);
-            if (mCallbackImageDataReader != null) {
-                // Calculate JPEG orientation.
-                @SuppressWarnings("ConstantConditions")
-                int sensorOrientation = mCameraCharacteristics.get(
-                        CameraCharacteristics.SENSOR_ORIENTATION);
-                mPreviewRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION,
-                        (sensorOrientation +
-                                mDisplayOrientation * (mFacing == Constants.FACING_FRONT ? 1 : -1) +
-                                360) % 360);
-                mPreviewRequestBuilder.addTarget(mCallbackImageDataReader.getSurface());
-                mCamera.createCaptureSession(Arrays.asList(surface, //mImageReader.getSurface(),
-                        mCallbackImageDataReader.getSurface()),
-                        mSessionCallback, null);
-            } else {
-                mCamera.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()),
-                        mSessionCallback, null);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Surface surface = mPreview.getSurface();
+                    mPreviewRequestBuilder = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                    mPreviewRequestBuilder.addTarget(surface);
+                    if (mCallbackImageDataReader != null) {
+                        // Calculate JPEG orientation.
+                        @SuppressWarnings("ConstantConditions")
+                        int sensorOrientation = mCameraCharacteristics.get(
+                                CameraCharacteristics.SENSOR_ORIENTATION);
+                        mPreviewRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION,
+                                (sensorOrientation +
+                                        mDisplayOrientation * (mFacing == Constants.FACING_FRONT ? 1 : -1) +
+                                        360) % 360);
+                        mPreviewRequestBuilder.addTarget(mCallbackImageDataReader.getSurface());
+                        mCamera.createCaptureSession(Arrays.asList(surface, //mImageReader.getSurface(),
+                                mCallbackImageDataReader.getSurface()),
+                                mSessionCallback, null);
+                    } else {
+                        mCamera.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()),
+                                mSessionCallback, null);
+                    }
+                } catch (CameraAccessException e) {
+                    throw new RuntimeException("Failed to start camera session");
+                }
             }
-        } catch (CameraAccessException e) {
-            throw new RuntimeException("Failed to start camera session");
-        }
+        }, 500);
     }
 
     /**
@@ -778,6 +788,8 @@ class Camera2 extends CameraViewImpl {
                     null);
             mCaptureCallback.setState(PictureCaptureCallback.STATE_PREVIEW);
         } catch (CameraAccessException e) {
+            Log.e(TAG, "Failed to restart camera preview.", e);
+        } catch (Exception e) {
             Log.e(TAG, "Failed to restart camera preview.", e);
         }
     }
