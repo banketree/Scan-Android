@@ -3,14 +3,18 @@ package com.uc56.scancore;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
+import android.hardware.Camera;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.Surface;
 import android.view.WindowManager;
 
 import com.google.zxing.BarcodeFormat;
@@ -124,5 +128,85 @@ public class ScanUtil {
         }
 
         return result;
+    }
+
+    //获取旋转
+    public static int getDisplayOrientation(Context context, int cameraId) {
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        if (cameraId == -1) {
+            Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, info);
+        } else {
+            Camera.getCameraInfo(cameraId, info);
+        }
+
+        WindowManager wm = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+
+        int rotation = display.getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        return result;
+    }
+
+    /**
+     * Like {@link #getFramingRect} but coordinates are in terms of the preview frame, not UI / screen.
+     *
+     * @return {@link Rect} expressing barcode scan area in terms of the preview size
+     */
+    public static Rect getRectInPreview(Context context, Rect rectBox, Point cameraResolution) {
+        // 获取相机分辨率和屏幕分辨率
+        Point screenResolution = getScreenResolution(context);
+        if (cameraResolution == null || screenResolution == null) {
+            // Called early, before init even finished
+            return null;
+        }
+        // 根据相机分辨率和屏幕分辨率的比例对屏幕中央聚焦框进行调整
+        rectBox.left = rectBox.left * cameraResolution.x / screenResolution.x;
+        rectBox.right = rectBox.right * cameraResolution.x / screenResolution.x;
+        rectBox.top = rectBox.top * cameraResolution.y / screenResolution.y;
+        rectBox.bottom = rectBox.bottom * cameraResolution.y / screenResolution.y;
+        return rectBox;
+    }
+
+    public static Bitmap getCorpBitmapInPreview(byte[] data, Rect rect) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        Bitmap srcBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        Bitmap corpBitmap = null;
+        if (rect == null) {
+            corpBitmap = srcBitmap;
+        } else {
+            corpBitmap = Bitmap.createBitmap(srcBitmap, rect.left, rect.top, rect.width(), rect.height());
+            srcBitmap.recycle();
+            srcBitmap = null;
+        }
+//        int bitmapWidth = corpBitmap.getWidth();
+//        int bitmapHeight = corpBitmap.getHeight();
+//        int[] pixels = new int[bitmapWidth * bitmapHeight];
+//        corpBitmap.getPixels(pixels, 0, bitmapWidth, 0, 0, bitmapWidth, bitmapHeight);
+//        corpBitmap.recycle();
+//        corpBitmap = null;
+        return corpBitmap;
     }
 }

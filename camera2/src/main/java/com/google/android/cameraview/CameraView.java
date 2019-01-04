@@ -417,9 +417,22 @@ public class CameraView extends FrameLayout {
         return mImpl.getFlash();
     }
 
+    public boolean isFlashlightOpen() {
+        return getFlash() == FLASH_ON || getFlash() == FLASH_TORCH;
+    }
+
+    public void openFlashlight() {
+        mImpl.openFlashlight();
+    }
+
+    public void closeFlashlight() {
+        mImpl.closeFlashlight();
+    }
+
     /**
      * Take a picture. The result will be returned to
-     * {@link Callback#onPictureTaken(CameraView, byte[])}.
+     * {@link Callback#
+     * onPictureTaken(CameraView, byte[])}.
      */
     public void takePicture() {
         mImpl.takePicture();
@@ -466,8 +479,8 @@ public class CameraView extends FrameLayout {
                 callback.onPictureTaken(CameraView.this, data, width, height);
             }
         }
-		
-		        @Override
+
+        @Override
         public void onPreviewFrame(byte[] data, int format, int width, int height) {
             for (Callback callback : mCallbacks) {
                 callback.onPreviewFrame(data, format, width, height);
@@ -563,12 +576,13 @@ public class CameraView extends FrameLayout {
 
         /**
          * Called when a preview frame is rendered
-         * @param data raw byte data
+         *
+         * @param data   raw byte data
          * @param format data format
-         * @param width image width
+         * @param width  image width
          * @param height image height
          */
-        public void onPreviewFrame(byte[] data, int format, int width, int height){
+        public void onPreviewFrame(byte[] data, int format, int width, int height) {
         }
 
     }

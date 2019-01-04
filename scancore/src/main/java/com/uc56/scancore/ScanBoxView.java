@@ -530,15 +530,9 @@ public class ScanBoxView extends View {
         return null;
     }
 
-    public Rect getScanBoxAreaRect(final Camera camera) {
-        if (camera == null || camera.getParameters() == null)
-            return null;
-
-        final Camera.Parameters parameters = camera.getParameters();
-        final Camera.Size size = parameters.getPreviewSize();
-
-        int width = size.width;
-        int height = size.height;
+    public Rect getScanBoxAreaRect(int preViewWidth, int preViewHeight) {
+        int width = preViewWidth;
+        int height = preViewHeight;
         if (ScanUtil.getOrientation(getContext()) == ScanUtil.ORIENTATION_PORTRAIT) {
             int tmp = width;
             width = height;

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <item type="id" name="scan_camera_preview" />
+    <item name="scan_camera_preview" type="id" />
+    <item name="scan_camera_preview_new" type="id" />
+    <item name="scan_camera_preview_frame" type="id" />
 </resources>

@@ -101,7 +101,17 @@ public class MainActivity extends AppCompatActivity implements
             switch (v.getId()) {
                 case R.id.take_picture:
                     if (mCameraView != null) {
-                        mCameraView.takePicture();
+                        if (mCameraView.isFlashlightOpen()) {
+                            mCameraView.closeFlashlight();
+                        } else {
+                            mCameraView.openFlashlight();
+                        }
+
+                        try {
+                            mCameraView.takePicture();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                     break;
             }

@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -31,6 +32,8 @@
         </activity>
 
         <activity android:name=".TestScanActivity" />
+        
+        <activity android:name=".TestScan2Activity" />
 
         <activity android:name=".test2.Camera2Activity" />
 

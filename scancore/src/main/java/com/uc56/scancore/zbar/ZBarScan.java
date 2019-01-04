@@ -1,8 +1,13 @@
 package com.uc56.scancore.zbar;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.text.TextUtils;
 
+import com.uc56.scancore.Interface.IHandleScanDataListener;
+import com.uc56.scancore.ScanUtil;
 import com.uc56.scancore.ScanView;
 
 import net.sourceforge.zbar.Config;
@@ -18,7 +23,7 @@ import java.util.List;
 import me.dm7.barcodescanner.zbar.BarcodeFormat;
 import me.dm7.barcodescanner.zbar.Result;
 
-public class ZBarScan implements ScanView.IHandleScanDataListener {
+public class ZBarScan implements IHandleScanDataListener {
     private boolean release = false;
 
     static {
@@ -44,6 +49,17 @@ public class ZBarScan implements ScanView.IHandleScanDataListener {
         if (mFormats == null) {
             mFormats = BarcodeFormat.ALL_FORMATS;
         }
+
+        //识别虽然快 但错误率高 貌似如下编码 识别出错
+        mFormats.remove(BarcodeFormat.DATABAR);
+        mFormats.remove(BarcodeFormat.DATABAR_EXP);
+        mFormats.remove(BarcodeFormat.EAN13);
+        mFormats.remove(BarcodeFormat.EAN8);
+        mFormats.remove(BarcodeFormat.UPCA);
+        mFormats.remove(BarcodeFormat.UPCE);
+        mFormats.remove(BarcodeFormat.I25);
+        mFormats.remove(BarcodeFormat.ISBN10);
+        mFormats.remove(BarcodeFormat.ISBN13);
         return mFormats;
     }
 
@@ -59,19 +75,33 @@ public class ZBarScan implements ScanView.IHandleScanDataListener {
     }
 
     @Override
-    public Boolean onHandleScanData(final byte[] previewData, byte[] data, int width, int height, Rect rect) {
+    public Boolean onHandleScanData(final byte[] previewData, byte[] data, final int format, int width, int height, Rect rect) {
         if (mScanner == null || release)
             return false;
 
 //        final Result rawResult = new Result();
-
         try {
-            Image barcode = new Image(width, height, "Y800");
-            barcode.setData(data);
-            if (rect != null)
-                barcode.setCrop(rect.left, rect.top, rect.width(), rect.height());
-            else
-                barcode.setCrop(0, 0, width, height);
+            Image barcode = null;
+            if (format == ImageFormat.JPEG) {
+                Bitmap corpBitmap = ScanUtil.getCorpBitmapInPreview(data, rect);
+                int bitmapWidth = corpBitmap.getWidth();
+                int bitmapHeight = corpBitmap.getHeight();
+                int[] pixels = new int[bitmapWidth * bitmapHeight];
+                corpBitmap.getPixels(pixels, 0, bitmapWidth, 0, 0, bitmapWidth, bitmapHeight);
+                corpBitmap.recycle();
+                corpBitmap = null;
+                barcode = new Image(width, height, "RGB4");
+                barcode.setData(pixels);
+                barcode = barcode.convert("Y800");
+            } else {
+                barcode = new Image(width, height, "Y800");
+                barcode.setData(data);
+
+                if (rect != null)
+                    barcode.setCrop(rect.left, rect.top, rect.width(), rect.height());
+                else
+                    barcode.setCrop(0, 0, width, height);
+            }
 
             if (mScanner.scanImage(barcode) != 0) {
                 SymbolSet syms = mScanner.getResults();

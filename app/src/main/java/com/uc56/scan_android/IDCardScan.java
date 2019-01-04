@@ -2,6 +2,7 @@ package com.uc56.scan_android;
 
 import android.graphics.Rect;
 
+import com.uc56.scancore.Interface.IHandleScanDataListener;
 import com.uc56.scancore.ScanView;
 
 
@@ -9,7 +10,7 @@ import com.uc56.scancore.ScanView;
  * Created by banketree on 2017/11/1.
  */
 
-public class IDCardScan implements ScanView.IHandleScanDataListener {
+public class IDCardScan implements IHandleScanDataListener {
     private IIDCardResultListener listener;
 
     public IDCardScan(IIDCardResultListener listener) {
@@ -17,7 +18,7 @@ public class IDCardScan implements ScanView.IHandleScanDataListener {
     }
 
     @Override
-    public Boolean onHandleScanData(final byte[] previewData, byte[] data, int width, int height, Rect rect) {
+    public Boolean onHandleScanData(final byte[] previewData, byte[] data, final int format, int width, int height, Rect rect) {
         return false;
     }
 

@@ -229,6 +229,16 @@ class Camera1 extends CameraViewImpl {
     }
 
     @Override
+    void openFlashlight() {
+        CameraUtils.openFlashlight(mCamera);
+    }
+
+    @Override
+    void closeFlashlight() {
+        CameraUtils.closeFlashlight(mCamera);
+    }
+
+    @Override
     void takePicture() {
         if (!isCameraOpened()) {
             throw new IllegalStateException(
@@ -258,7 +268,7 @@ class Camera1 extends CameraViewImpl {
                 @Override
                 public void onPictureTaken(byte[] data, Camera camera) {
                     isPictureCaptureInProgress.set(false);
-                    mCallback.onPictureTaken(data,mPreview.getWidth(),mPreview.getHeight());
+                    mCallback.onPictureTaken(data, mPreview.getWidth(), mPreview.getHeight());
                     camera.cancelAutoFocus();
                     camera.startPreview();
                 }
@@ -399,9 +409,9 @@ class Camera1 extends CameraViewImpl {
     /**
      * Calculate display orientation
      * https://developer.android.com/reference/android/hardware/Camera.html#setDisplayOrientation(int)
-     *
+     * <p>
      * This calculation is used for orienting the preview
-     *
+     * <p>
      * Note: This is not the same calculation as the camera rotation
      *
      * @param screenOrientationDegrees Screen orientation in degrees
@@ -417,10 +427,10 @@ class Camera1 extends CameraViewImpl {
 
     /**
      * Calculate camera rotation
-     *
+     * <p>
      * This calculation is applied to the output JPEG either via Exif Orientation tag
      * or by actually transforming the bitmap. (Determined by vendor camera API implementation)
-     *
+     * <p>
      * Note: This is not the same calculation as the display orientation
      *
      * @param screenOrientationDegrees Screen orientation in degrees

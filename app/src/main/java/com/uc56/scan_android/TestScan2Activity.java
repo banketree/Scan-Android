@@ -19,7 +19,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.common.HybridBinarizer;
+import com.uc56.scan_android.test2.PlanarYUVLuminanceSource;
 import com.uc56.scancore.ScanView;
+import com.uc56.scancore.ScanView2;
 import com.uc56.scancore.zbar.ZBarScan;
 import com.uc56.scancore.zxing.QRCodeDecoder;
 import com.uc56.scancore.zxing.ZXingScan;
@@ -28,19 +32,19 @@ import java.io.ByteArrayOutputStream;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 
-public class TestScanActivity extends AppCompatActivity {
-    private static final String TAG = TestScanActivity.class.getSimpleName();
+public class TestScan2Activity extends AppCompatActivity {
+    private static final String TAG = TestScan2Activity.class.getSimpleName();
     private static final int REQUEST_CODE_CHOOSE_QRCODE_FROM_GALLERY = 666;
 
-    private ScanView mQRCodeView;
+    private ScanView2 scanView2;
     private ImageView imageView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_scan);
+        setContentView(R.layout.activity_test_scan2);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        mQRCodeView = (ScanView) findViewById(R.id.zxingview);
+        scanView2 = (ScanView2) findViewById(R.id.zxingview);
         imageView = (ImageView) findViewById(R.id.img_camera);
         test();
     }
@@ -48,24 +52,24 @@ public class TestScanActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mQRCodeView.startCamera();
-        mQRCodeView.postDelayed(new Runnable() {
+        scanView2.startCamera();
+        scanView2.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mQRCodeView.startSpotAndShowRect();
+                scanView2.startSpotAndShowRect();
             }
         }, 300);
     }
 
     @Override
     protected void onStop() {
-        mQRCodeView.stopCamera();
+        scanView2.stopCamera();
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        mQRCodeView.onDestroy();
+        scanView2.onDestroy();
         super.onDestroy();
     }
 
@@ -78,52 +82,52 @@ public class TestScanActivity extends AppCompatActivity {
         Log.i(TAG, "result:" + result);
         Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
         vibrate();
-        mQRCodeView.startSpot();
+        scanView2.startSpot();
     }
 
 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.start_spot:
-                mQRCodeView.startSpot();
+                scanView2.startSpot();
                 break;
             case R.id.stop_spot:
-                mQRCodeView.stopSpot();
+                scanView2.stopSpot();
                 break;
             case R.id.start_spot_showrect:
-                mQRCodeView.startSpotAndShowRect();
+                scanView2.startSpotAndShowRect();
                 break;
             case R.id.stop_spot_hiddenrect:
-                mQRCodeView.stopSpotAndHiddenRect();
+                scanView2.stopSpotAndHiddenRect();
                 break;
             case R.id.show_rect:
-                mQRCodeView.showScanRect();
+                scanView2.showScanRect();
                 break;
             case R.id.hidden_rect:
-                mQRCodeView.hiddenScanRect();
+                scanView2.hiddenScanRect();
                 break;
             case R.id.start_preview:
-                mQRCodeView.startCamera();
+                scanView2.startCamera();
                 break;
             case R.id.stop_preview:
-                mQRCodeView.stopCamera();
+                scanView2.stopCamera();
                 break;
             case R.id.open_flashlight:
-                mQRCodeView.openFlashlight();
+                scanView2.openFlashlight();
                 break;
             case R.id.close_flashlight:
-                mQRCodeView.closeFlashlight();
+                scanView2.closeFlashlight();
                 break;
             case R.id.scan_barcode:
                 test();
-                mQRCodeView.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_bar, null));
-                mQRCodeView.getScanBoxView().setTipText("将条形码放入框中");
+                scanView2.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_bar, null));
+                scanView2.getScanBoxView().setTipText("将条形码放入框中");
 
                 break;
             case R.id.scan_qrcode:
                 test();
-                mQRCodeView.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_qrcode, null));
-                mQRCodeView.getScanBoxView().setTipText("将二维码放入框中");
+                scanView2.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_qrcode, null));
+                scanView2.getScanBoxView().setTipText("将二维码放入框中");
                 break;
             case R.id.choose_qrcde_from_gallery:
                 /*
@@ -133,21 +137,38 @@ public class TestScanActivity extends AppCompatActivity {
                  */
                 startActivityForResult(BGAPhotoPickerActivity.newIntent(this, null, 1, null, false), REQUEST_CODE_CHOOSE_QRCODE_FROM_GALLERY);
                 break;
+
+            case R.id.tv_switch_camera:
+                if (scanView2.isCameraNewView()) {
+                    scanView2.showCameraByOld();
+                } else {
+                    scanView2.showCameraByNew();
+                }
+                scanView2.startCamera();
+                scanView2.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        scanView2.startSpotAndShowRect();
+                    }
+                }, 300);
+                break;
         }
     }
 
+    static Bitmap bitmap = null;
+
     private void test() {
         try {
-            mQRCodeView.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_qrcode, null));
-            mQRCodeView.getScanBoxView().setTipText("将证件放入框中");
-            mQRCodeView.getScanBoxView().setOnlyDecodeScanBoxArea(true);
+            scanView2.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_qrcode, null));
+            scanView2.getScanBoxView().setTipText("将证件放入框中");
+            scanView2.getScanBoxView().setOnlyDecodeScanBoxArea(true);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        mQRCodeView.removeHandleScanDataListenerAll();
-        mQRCodeView.addHandleScanDataListener(new ZXingScan(new ZXingScan.IZXingResultListener() {
+        scanView2.removeHandleScanDataListenerAll();
+        scanView2.addHandleScanDataListener(new ZXingScan(new ZXingScan.IZXingResultListener() {
             @Override
             public boolean onScanResult(BarcodeFormat codeFormat, String result) {
                 onScanQRCodeSuccess("ZXingScan:" + result + "  " + codeFormat.name());
@@ -155,7 +176,7 @@ public class TestScanActivity extends AppCompatActivity {
             }
         }));
 
-        mQRCodeView.addHandleScanDataListener(new ZBarScan(new ZBarScan.IZbarResultListener() {
+        scanView2.addHandleScanDataListener(new ZBarScan(new ZBarScan.IZbarResultListener() {
             @Override
             public boolean onScanResult(me.dm7.barcodescanner.zbar.BarcodeFormat codeFormat, String result) {
                 onScanQRCodeSuccess("ZBarScan:" + result + "  " + codeFormat.getName());
@@ -163,7 +184,7 @@ public class TestScanActivity extends AppCompatActivity {
             }
         }));
 
-        mQRCodeView.addHandleScanDataListener(new IDCardScan(new IDCardScan.IIDCardResultListener() {//身份证
+        scanView2.addHandleScanDataListener(new IDCardScan(new IDCardScan.IIDCardResultListener() {//身份证
             @Override
             public void onScanResult(final String result) {
                 runOnUiThread(new Runnable() {
@@ -177,41 +198,60 @@ public class TestScanActivity extends AppCompatActivity {
             @Override
             public Boolean onHandleScanData(final byte[] previewData, final byte[] desData, final int format, int width, int height, Rect rect) {
                 super.onHandleScanData(previewData, desData, format, width, height, rect);
-//                int temp = width;
-//                width = height;
-//                height = temp;
-                byte[] data = new byte[previewData.length];
-                ScanView.rotateYUV240SP(previewData, data, height, width);//旋转
+                if (format == ImageFormat.JPEG) {
+                    try {
+                        //将rawImage转换成bitmap
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inPreferredConfig = Bitmap.Config.RGB_565;
+                        Bitmap srcBitmap = BitmapFactory.decodeByteArray(desData, 0, desData.length, options);
+                        final Bitmap bitmap1 = Bitmap.createBitmap(srcBitmap, rect.left, rect.top, rect.width(), rect.height());
+                        srcBitmap.recycle();
+                        srcBitmap = null;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                imageView.setImageBitmap(bitmap1);
+                                if (bitmap != null) bitmap.recycle();
+                                bitmap = bitmap1;
+                                imageView.postInvalidate();
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    byte[] data = new byte[previewData.length];
+                    ScanView.rotateYUV240SP(previewData, data, height, width);//旋转
 
-                try {
-                    ByteArrayOutputStream baos;
-                    byte[] rawImage;
-                    BitmapFactory.Options newOpts = new BitmapFactory.Options();
-                    newOpts.inJustDecodeBounds = true;
-                    YuvImage yuvimage = new YuvImage(
-                            data,
-                            ImageFormat.NV21,//YUV240SP
-                            width,
-                            height,
-                            null);
-                    baos = new ByteArrayOutputStream();
-                    yuvimage.compressToJpeg(rect, 100, baos);// 80--JPG图片的质量[0-100],100最高
-                    rawImage = baos.toByteArray();
-                    //将rawImage转换成bitmap
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inPreferredConfig = Bitmap.Config.RGB_565;
-                    final Bitmap bitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options);
+                    try {
+                        ByteArrayOutputStream baos;
+                        byte[] rawImage;
+                        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+                        newOpts.inJustDecodeBounds = true;
+                        YuvImage yuvimage = new YuvImage(
+                                data,
+                                ImageFormat.NV21,//YUV240SP
+                                width,
+                                height,
+                                null);
+                        baos = new ByteArrayOutputStream();
+                        yuvimage.compressToJpeg(rect, 100, baos);// 80--JPG图片的质量[0-100],100最高
+                        rawImage = baos.toByteArray();
+                        //将rawImage转换成bitmap
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inPreferredConfig = Bitmap.Config.RGB_565;
+                        final Bitmap bitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageView.setImageBitmap(bitmap);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                imageView.setImageBitmap(bitmap);
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-
                 return false;
             }
         });
@@ -221,7 +261,7 @@ public class TestScanActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        mQRCodeView.showScanRect();
+        scanView2.showScanRect();
 
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_CHOOSE_QRCODE_FROM_GALLERY) {
             final String picturePath = BGAPhotoPickerActivity.getSelectedImages(data).get(0);
@@ -239,9 +279,9 @@ public class TestScanActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(String result) {
                     if (TextUtils.isEmpty(result)) {
-                        Toast.makeText(TestScanActivity.this, "未发现二维码", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TestScan2Activity.this, "未发现二维码", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(TestScanActivity.this, result, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TestScan2Activity.this, result, Toast.LENGTH_SHORT).show();
                     }
                 }
             }.execute();

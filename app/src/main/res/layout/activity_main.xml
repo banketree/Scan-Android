@@ -11,6 +11,11 @@
         android:text="测试扫描二维码"/>
 
     <TextView
+        android:id="@+id/test_scan_qrcode2"
+        style="@style/MatchWrapTv"
+        android:text="测试扫描二维码2"/>
+
+    <TextView
         android:id="@+id/test_generate_qrcode"
         style="@style/MatchWrapTv"
         android:text="测试生成和识别图片二维码"/>

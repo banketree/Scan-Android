@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Point;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -32,6 +33,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -208,8 +210,11 @@ class Camera2 extends CameraViewImpl {
 
     private int mDisplayOrientation;
 
+    private Context context;
+
     Camera2(Callback callback, PreviewImpl preview, Context context) {
         super(callback, preview);
+        this.context = context;
         mCameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         mPreview.setCallback(new PreviewImpl.Callback() {
             @Override
@@ -350,6 +355,30 @@ class Camera2 extends CameraViewImpl {
     }
 
     @Override
+    void openFlashlight() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mCameraManager.setTorchMode(mCameraId, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        setFlash(Constants.FLASH_TORCH);
+    }
+
+    @Override
+    void closeFlashlight() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mCameraManager.setTorchMode(mCameraId, false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        setFlash(Constants.FLASH_OFF);
+    }
+
+    @Override
     void takePicture() {
         if (mAutoFocus) {
             lockFocus();
@@ -476,7 +505,7 @@ class Camera2 extends CameraViewImpl {
         Size largest = mPictureSizes.sizes(mAspectRatio).last();
         initImageReader(largest.getWidth(), largest.getHeight());
 
-//        Size size = chooseOptimalSize();
+        Size size = chooseOptimalSize();
         largest = mPreviewSizes.sizes(mAspectRatio).last();
         initCallbackImageDataReader(largest.getWidth(), largest.getHeight());
     }

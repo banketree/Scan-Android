@@ -65,6 +65,10 @@ abstract class CameraViewImpl {
 
     abstract int getFlash();
 
+    abstract void openFlashlight();//打开闪光灯
+
+    abstract void closeFlashlight();//关闭散光灯
+
     abstract void takePicture();
 
     abstract void takePreview();
@@ -77,7 +81,7 @@ abstract class CameraViewImpl {
 
         void onCameraClosed();
 
-        void onPictureTaken(byte[] data,int width,int height);
+        void onPictureTaken(byte[] data, int width, int height);
 
         void onPreviewFrame(byte[] data, int format, int width, int height);
     }
