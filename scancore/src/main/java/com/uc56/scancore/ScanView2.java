@@ -53,7 +53,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
         addView(containerFrameLayout);
         layoutParams.addRule(RelativeLayout.ALIGN_TOP, containerFrameLayout.getId());
         layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, containerFrameLayout.getId());
-        showCameraByNew();
+        showCameraByOld();
     }
 
     public void showCameraByOld() {
