@@ -99,11 +99,23 @@ class Camera1 extends CameraViewImpl {
     @Override
     void stop() {
         if (mCamera != null) {
+            mCamera.setPreviewCallback(null);
             mCamera.stopPreview();
         }
         mShowingPreview = false;
         releaseCamera();
     }
+
+
+    private Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera) {
+            final Camera.Parameters parameters = camera.getParameters();
+            final int width = parameters.getPreviewSize().width;
+            final int height = parameters.getPreviewSize().height;
+            mCallback.onPreviewFrame(data, parameters.getPreviewFormat(), width, height);
+        }
+    };
 
     // Suppresses Camera#setPreviewTexture
     @SuppressLint("NewApi")
@@ -122,16 +134,7 @@ class Camera1 extends CameraViewImpl {
                 mCamera.setPreviewTexture((SurfaceTexture) mPreview.getSurfaceTexture());
             }
 
-            mCamera.setPreviewCallback(new Camera.PreviewCallback() {
-                @Override
-                public void onPreviewFrame(byte[] data, Camera camera) {
-                    final Camera.Parameters parameters = camera.getParameters();
-                    final int width = parameters.getPreviewSize().width;
-                    final int height = parameters.getPreviewSize().height;
-                    mCallback.onPreviewFrame(data, parameters.getPreviewFormat(), width, height);
-                }
-            });
-
+            mCamera.setPreviewCallback(previewCallback);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -352,15 +355,16 @@ class Camera1 extends CameraViewImpl {
             mAspectRatio = chooseAspectRatio();
             sizes = mPreviewSizes.sizes(mAspectRatio);
         }
-        Size size = chooseOptimalSize(sizes);
+//        Size size = chooseOptimalSize(sizes);
 
         // Always re-apply camera parameters
         // Largest picture size in this ratio
         final Size pictureSize = mPictureSizes.sizes(mAspectRatio).last();
+        final Size previewSize = sizes.last();
         if (mShowingPreview) {
             mCamera.stopPreview();
         }
-        mCameraParameters.setPreviewSize(size.getWidth(), size.getHeight());
+        mCameraParameters.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
         mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
         mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
         setAutoFocusInternal(mAutoFocus);
@@ -399,11 +403,12 @@ class Camera1 extends CameraViewImpl {
     }
 
     private void releaseCamera() {
+        if (mCallback != null) mCallback.onCameraClosed();
         if (mCamera != null) {
+            mCamera.setPreviewCallback(null);
             mCamera.release();
-            mCamera = null;
-            mCallback.onCameraClosed();
         }
+        mCamera = null;
     }
 
     /**

@@ -201,14 +201,17 @@ public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
      * 关闭摄像头预览，并且隐藏扫描框
      */
     public void stopCamera() {
+        stopSpotAndHiddenRect();
+        if (mPreview != null) {
+            mPreview.stopCameraPreview();
+            mPreview.setCamera(null);
+        }
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+
         try {
-            stopSpotAndHiddenRect();
-            if (mCamera != null) {
-                mPreview.stopCameraPreview();
-                mPreview.setCamera(null);
-                mCamera.release();
-                mCamera = null;
-            }
         } catch (Exception e) {
         }
     }

@@ -96,7 +96,7 @@ public class CameraView extends FrameLayout {
 
     private final DisplayOrientationDetector mDisplayOrientationDetector;
 
-    public static boolean isRequireCamera1 = false; //为识别 ocr
+    public static boolean isRequireCamera1 = false; //为识锟斤拷 ocr
 
     public CameraView(Context context) {
         this(context, null);
@@ -117,7 +117,7 @@ public class CameraView extends FrameLayout {
         // Internal setup
         final PreviewImpl preview = createPreviewImpl(context);
         mCallbacks = new CallbackBridge();
-        //目前发现 ocr 无法识别
+        //目前锟斤拷锟斤拷 ocr 锟睫凤拷识锟斤拷
         if (Build.VERSION.SDK_INT < 21 || isRequireCamera1) {
             mImpl = new Camera1(mCallbacks, preview);
         } else if (Build.VERSION.SDK_INT < 23) {
@@ -125,6 +125,13 @@ public class CameraView extends FrameLayout {
         } else {
             mImpl = new Camera2Api23(mCallbacks, preview, context.getApplicationContext());
         }
+//        if (mImpl instanceof Camera2 || mImpl instanceof Camera2Api23) {
+////            chooseCameraIdByFacing
+//            if (!((Camera2) mImpl).chooseCameraIdByFacing()) {
+//                mImpl.stop();
+//                mImpl = new Camera1(mCallbacks, preview);
+//            }
+//        }
         // Attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CameraView, defStyleAttr,
                 R.style.Widget_CameraView);

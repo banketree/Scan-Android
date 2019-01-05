@@ -53,7 +53,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
         addView(containerFrameLayout);
         layoutParams.addRule(RelativeLayout.ALIGN_TOP, containerFrameLayout.getId());
         layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, containerFrameLayout.getId());
-        showCameraByOld();
+        showCameraByNew();
     }
 
     public void showCameraByOld() {
@@ -193,6 +193,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
     }
 
     public View getCameraPreView() {
+        if (iCameraP == null) return null;
         return iCameraP.getCameraPreView();
     }
 
@@ -200,6 +201,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 打开后置摄像头开始预览，但是并未开始识别
      */
     public void startCamera() {
+        if (iCameraP == null) return;
         iCameraP.startCamera();
     }
 
@@ -207,6 +209,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 关闭摄像头预览，并且隐藏扫描框
      */
     public void stopCamera() {
+        if (iCameraP == null) return;
         iCameraP.stopCamera();
     }
 
@@ -214,6 +217,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 延迟0.5秒后开始识别
      */
     public void startSpot() {
+        if (iCameraP == null) return;
         mSpotAble = true;
         iCameraP.startSpot();
     }
@@ -224,6 +228,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
     public void stopSpot() {
         cancelProcessDataTask();
         mSpotAble = false;
+        if (iCameraP == null) return;
         iCameraP.stopSpot();
     }
 
@@ -231,6 +236,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 停止识别，并且隐藏扫描框
      */
     public void stopSpotAndHiddenRect() {
+        if (iCameraP == null) return;
         try {
             stopSpot();
             hiddenScanRect();
@@ -243,6 +249,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 显示扫描框，并且延迟1.5秒后开始识别
      */
     public void startSpotAndShowRect() {
+        if (iCameraP == null) return;
         try {
             startSpot();
             showScanRect();
@@ -254,6 +261,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 打开闪光灯
      */
     public void openFlashlight() {
+        if (iCameraP == null) return;
         iCameraP.openFlashlight();
     }
 
@@ -261,6 +269,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 关闭散光灯
      */
     public void closeFlashlight() {
+        if (iCameraP == null) return;
         iCameraP.closeFlashlight();
     }
 
@@ -269,8 +278,8 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      */
     public void onDestroy() {
         setRequireCamera1(false);
-        stopSpot();
-        iCameraP.onDestroy();
+        removeCameraView();
+        iCameraP = null;
     }
 
     /**
@@ -296,7 +305,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (iCameraP instanceof NewCameraP && System.currentTimeMillis() - lastPreviewFrameTime <= 300) {//防止过快
+        if (iCameraP instanceof NewCameraP && System.currentTimeMillis() - lastPreviewFrameTime <= 200) {//防止过快
             return;
         }
         lastPreviewFrameTime = System.currentTimeMillis();

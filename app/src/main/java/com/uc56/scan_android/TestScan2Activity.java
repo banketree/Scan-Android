@@ -55,11 +55,11 @@ public class TestScan2Activity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        scanView2.startCamera();
         scanView2.postDelayed(new Runnable() {
             @Override
             public void run() {
                 scanView2.startSpotAndShowRect();
+                scanView2.startCamera();
             }
         }, 300);
     }
@@ -244,12 +244,20 @@ public class TestScan2Activity extends AppCompatActivity {
                                 height,
                                 null);
                         baos = new ByteArrayOutputStream();
-                        yuvimage.compressToJpeg(rect, 100, baos);// 80--JPG图片的质量[0-100],100最高
+                        try {
+                            yuvimage.compressToJpeg(rect, 100, baos);// 80--JPG图片的质量[0-100],100最高
+                        } catch (Exception e) {
+                            int height1 = yuvimage.getHeight();
+                            int width1 = yuvimage.getWidth();
+                            yuvimage.compressToJpeg(new Rect(0, 0, width1, height1), 100, baos);// 80--JPG图片的质量[0-100],100最高
+                            Log.i(TAG, "onHandleScanData: " + height1 + width1);
+                        }
                         rawImage = baos.toByteArray();
                         //将rawImage转换成bitmap
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inPreferredConfig = Bitmap.Config.RGB_565;
                         final Bitmap bitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options);
+
 
                         runOnUiThread(new Runnable() {
                             @Override

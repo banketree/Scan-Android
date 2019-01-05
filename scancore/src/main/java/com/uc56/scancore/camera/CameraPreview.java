@@ -97,20 +97,26 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
     }
 
     public void stopCameraPreview() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+        mPreviewing = false;
+        try {
+            if (doAutoFocus != null)
+                removeCallbacks(doAutoFocus);
+        } catch (Exception e) {
+        }
+
         if (mCamera != null) {
             try {
-                removeCallbacks(doAutoFocus);
-                mPreviewing = false;
                 mCamera.cancelAutoFocus();
                 mCamera.setOneShotPreviewCallback(null);
+                mCamera.setPreviewCallback(null);
                 mCamera.stopPreview();
             } catch (Exception e) {
                 Log.e(TAG, e.toString(), e);
             }
-        }
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-            countDownTimer = null;
         }
     }
 

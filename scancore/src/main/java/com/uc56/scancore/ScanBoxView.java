@@ -520,6 +520,7 @@ public class ScanBoxView extends View {
         if (mIsOnlyDecodeScanBoxArea) {
             Rect rect = new Rect(mFramingRect);
             float ratio = 1.0f * previewHeight / getMeasuredHeight();
+            if (ratio > 1) ratio = 1.0f;
             rect.left = (int) (rect.left * ratio);
             rect.right = (int) (rect.right * ratio);
             rect.top = (int) (rect.top * ratio);
