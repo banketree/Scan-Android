@@ -71,35 +71,12 @@ final class CameraConfigurationManager {
         return mCameraResolution;
     }
 
-    public void setDesiredCameraParameters(Camera camera, boolean safeMode) {
+    public void setDesiredCameraParameters(Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
         parameters.setPreviewSize(mPreviewResolution.x, mPreviewResolution.y);
         setZoom(parameters);
+
         camera.setDisplayOrientation(getDisplayOrientation());
-        if (parameters == null) {
-            Log.w(TAG, "Device error: no camera parameters are available. Proceeding without configuration.");
-            return;
-        }
-        Log.i(TAG, "Initial camera parameters: " + parameters.flatten());
-        if (safeMode) {
-            Log.w(TAG, "In camera config safe mode -- most settings will not be honored");
-        }
-        CameraConfigurationUtils.setFocus(
-                parameters, true, true,
-                safeMode);
-
-        if (!safeMode) {
-            //CameraConfigurationUtils.setInvertColor(parameters); //反白
-            CameraConfigurationUtils.setBarcodeSceneMode(parameters);
-            CameraConfigurationUtils.setVideoStabilization(parameters);
-            CameraConfigurationUtils.setFocusArea(parameters);
-            CameraConfigurationUtils.setMetering(parameters);
-
-            //SetRecordingHint to true also a workaround for low framerate on Nexus 4
-            //https://stackoverflow.com/questions/14131900/extreme-camera-lag-on-nexus-4
-            parameters.setRecordingHint(true);
-        }
-
         camera.setParameters(parameters);
     }
 

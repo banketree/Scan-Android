@@ -153,10 +153,10 @@ public class TestScan2Activity extends AppCompatActivity {
                 } else {
                     scanView2.showCameraByNew();
                 }
-                scanView2.startCamera();
                 scanView2.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        scanView2.startCamera();
                         scanView2.startSpotAndShowRect();
                     }
                 }, 300);
