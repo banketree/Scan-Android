@@ -66,7 +66,7 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
                         mCamera.setPreviewDisplay(getHolder());
                         mCameraConfigurationManager.setDesiredCameraParameters(mCamera);
                         mCamera.startPreview();
-
+                        mSurfaceCreated = true;
                         mCamera.autoFocus(autoFocusCB);
                         startAutoFocusTimer();
                     } catch (Exception e) {
@@ -159,7 +159,7 @@ public class CameraPreview extends CameraZoomPreview implements SurfaceHolder.Ca
         }
     };
 
-    private long interVal = 3500L;//延迟3.5秒
+    private long interVal = 1500L;//延迟3.5秒
 
     private void startAutoFocusTimer() {
         if (countDownTimer != null)

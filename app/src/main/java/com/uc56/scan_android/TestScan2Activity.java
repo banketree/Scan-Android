@@ -151,6 +151,7 @@ public class TestScan2Activity extends AppCompatActivity {
                 if (scanView2.isCameraNewView()) {
                     scanView2.showCameraByOld();
                 } else {
+                    scanView2.setRequireCamera1(true);
                     scanView2.showCameraByNew();
                 }
                 scanView2.postDelayed(new Runnable() {
