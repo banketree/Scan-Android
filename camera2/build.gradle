@@ -17,7 +17,6 @@ def androidConfig = rootProject.ext.android
 
 android {
     compileSdkVersion androidConfig.compileSdkVersion
-    buildToolsVersion androidConfig.buildToolsVersion
 
     defaultConfig {
         minSdkVersion androidConfig.minSdkVersion
