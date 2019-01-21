@@ -59,7 +59,11 @@ public class TestScan2Activity extends AppCompatActivity {
             @Override
             public void run() {
                 scanView2.startSpotAndShowRect();
-                scanView2.startCamera();
+                try {
+                    scanView2.startCamera();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }, 300);
     }
@@ -157,7 +161,12 @@ public class TestScan2Activity extends AppCompatActivity {
                 scanView2.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        scanView2.startCamera();
+                        try {
+                            scanView2.startCamera();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         scanView2.startSpotAndShowRect();
                     }
                 }, 300);
@@ -181,7 +190,7 @@ public class TestScan2Activity extends AppCompatActivity {
         scanView2.addHandleScanDataListener(new ZXingScan(new ZXingScan.IZXingResultListener() {
             @Override
             public boolean onScanResult(BarcodeFormat codeFormat, String result) {
-                onScanQRCodeSuccess("ZXingScan:" + result + "  " + codeFormat.name());
+                onScanQRCodeSuccess("result:" + result + "  ZXingScan:" + codeFormat.name());
                 return false;
             }
         }));
@@ -189,7 +198,7 @@ public class TestScan2Activity extends AppCompatActivity {
         scanView2.addHandleScanDataListener(new ZBarScan(new ZBarScan.IZbarResultListener() {
             @Override
             public boolean onScanResult(me.dm7.barcodescanner.zbar.BarcodeFormat codeFormat, String result) {
-                onScanQRCodeSuccess("ZBarScan:" + result + "  " + codeFormat.getName());
+                onScanQRCodeSuccess("result:" + result + "  ZBarScan:" + codeFormat.getName());
                 return false;
             }
         }));
@@ -200,7 +209,7 @@ public class TestScan2Activity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        onScanQRCodeSuccess("IDCardScan:" + result);
+                        onScanQRCodeSuccess("result:" + result + "   IDCardScan");
                     }
                 });
             }

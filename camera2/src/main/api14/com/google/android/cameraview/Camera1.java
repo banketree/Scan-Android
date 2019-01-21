@@ -75,17 +75,21 @@ class Camera1 extends CameraViewImpl {
         super(callback, preview);
         preview.setCallback(new PreviewImpl.Callback() {
             @Override
-            public void onSurfaceChanged() {
-                if (mCamera != null) {
-                    setUpPreview();
-                    adjustCameraParameters();
+            public void onSurfaceChanged() { //MODIFY
+                try {
+                    if (mCamera != null) {
+                        setUpPreview();
+                        adjustCameraParameters();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
     }
 
     @Override
-    boolean start() {
+    boolean start() { //Add try cache
         chooseCamera();
         openCamera();
         if (mPreview.isReady()) {
@@ -110,10 +114,21 @@ class Camera1 extends CameraViewImpl {
     private Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            final Camera.Parameters parameters = camera.getParameters();
-            final int width = parameters.getPreviewSize().width;
-            final int height = parameters.getPreviewSize().height;
-            mCallback.onPreviewFrame(data, parameters.getPreviewFormat(), width, height);
+            try {
+                if (data == null || data.length == 0) return;
+                Camera.Parameters parameters = camera.getParameters();
+                {  //确保变量 存在
+                    if (parameters == null)
+                        parameters = mCameraParameters;
+                    if (parameters == null) return;
+                }
+
+                final int width = parameters.getPreviewSize().width;
+                final int height = parameters.getPreviewSize().height;
+                mCallback.onPreviewFrame(data, parameters.getPreviewFormat(), width, height);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     };
 
@@ -310,14 +325,14 @@ class Camera1 extends CameraViewImpl {
                 return;
             }
         }
-        mCameraId = INVALID_CAMERA_ID;
+        mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;//INVALID_CAMERA_ID; 默认读取 后背摄像
     }
 
-    private void openCamera() {
+    private void openCamera() {//
         if (mCamera != null) {
             releaseCamera();
         }
-        mCamera = Camera.open(mCameraId);
+        mCamera = Camera.open(mCameraId);// error
         mCameraParameters = mCamera.getParameters();
         // Supported preview sizes
         mPreviewSizes.clear();
@@ -349,29 +364,33 @@ class Camera1 extends CameraViewImpl {
         return r;
     }
 
-    void adjustCameraParameters() {
-        SortedSet<Size> sizes = mPreviewSizes.sizes(mAspectRatio);
-        if (sizes == null) { // Not supported
-            mAspectRatio = chooseAspectRatio();
-            sizes = mPreviewSizes.sizes(mAspectRatio);
-        }
+    void adjustCameraParameters() {//
+        try {
+            SortedSet<Size> sizes = mPreviewSizes.sizes(mAspectRatio);
+            if (sizes == null) { // Not supported
+                mAspectRatio = chooseAspectRatio();
+                sizes = mPreviewSizes.sizes(mAspectRatio);
+            }
 //        Size size = chooseOptimalSize(sizes);
 
-        // Always re-apply camera parameters
-        // Largest picture size in this ratio
-        final Size pictureSize = mPictureSizes.sizes(mAspectRatio).last();
-        final Size previewSize = sizes.last();
-        if (mShowingPreview) {
-            mCamera.stopPreview();
-        }
-        mCameraParameters.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
-        mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
-        mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
-        setAutoFocusInternal(mAutoFocus);
-        setFlashInternal(mFlash);
-        mCamera.setParameters(mCameraParameters);
-        if (mShowingPreview) {
-            mCamera.startPreview();
+            // Always re-apply camera parameters
+            // Largest picture size in this ratio
+            final Size pictureSize = mPictureSizes.sizes(mAspectRatio).last();
+            final Size previewSize = sizes.last();
+            if (mShowingPreview) {
+                mCamera.stopPreview();
+            }
+            mCameraParameters.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
+            mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
+            mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
+            setAutoFocusInternal(mAutoFocus);
+            setFlashInternal(mFlash);
+            mCamera.setParameters(mCameraParameters);
+            if (mShowingPreview) {
+                mCamera.startPreview(); //error
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

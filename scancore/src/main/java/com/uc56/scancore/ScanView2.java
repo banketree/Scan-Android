@@ -305,7 +305,7 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (iCameraP instanceof NewCameraP && System.currentTimeMillis() - lastPreviewFrameTime <= 200) {//防止过快
+        if (iCameraP instanceof NewCameraP && System.currentTimeMillis() - lastPreviewFrameTime <= 100) {//防止过快
             return;
         }
         lastPreviewFrameTime = System.currentTimeMillis();
