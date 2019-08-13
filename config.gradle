@@ -1,11 +1,7 @@
 ext {
-    app = [
-            versionCode: 151,
-            versionName: "3.5.01A",
-            flavorDimensions: "151",
-    ]
     android = [
             compileSdkVersion    : 27,
+            buildToolsVersion    : "28.0.3",
             minSdkVersion        : 16,
             targetSdkVersion     : 27,
             supportLibraryVersion: "27.+",
