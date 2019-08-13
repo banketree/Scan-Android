@@ -19,6 +19,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -36,4 +42,23 @@ dependencies {
     compile 'cn.bingoogolapple:bga-adapter:1.2.0@aar'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile project(':scancore')
+
+    //测试
+    testImplementation 'junit:junit:4.12'//Junit测试框架,创建项目自动引入
+//Mockito框架引入
+//    testImplementation 'org.mockito:mockito-core:2.11.0'
+//robolectric 开源测试ui库
+    testImplementation 'org.robolectric:robolectric:3.8'
+
+    //引入PowerMock框架，必须对应mockito的版本，这里2.8.0-2.8.9 对应powermock的1.7.x版本
+    testImplementation 'org.mockito:mockito-core:2.8.9'
+    testImplementation 'org.powermock:powermock-module-junit4:1.7.3'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.3'
+
+    //注意这里是mockito2
+//这里为使用@Rule方式引入要依赖的两个库，@Rule方式引入防止@RunWith被占用
+    testImplementation 'org.powermock:powermock-module-junit4-rule:1.7.3'
+    testImplementation 'org.powermock:powermock-classloading-xstream:1.7.3'
+
+    testImplementation "org.robolectric:robolectric:3.8"
 }

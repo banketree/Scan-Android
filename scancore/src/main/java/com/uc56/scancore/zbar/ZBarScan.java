@@ -31,7 +31,7 @@ public class ZBarScan implements IHandleScanDataListener {
     }
 
     private ImageScanner mScanner;
-    private List<BarcodeFormat> mFormats;
+    private static volatile List<BarcodeFormat> mFormats;
     private IZbarResultListener listener;
 
 
@@ -45,21 +45,22 @@ public class ZBarScan implements IHandleScanDataListener {
         setupScanner();
     }
 
-    public Collection<BarcodeFormat> getFormats() {
+    public static Collection<BarcodeFormat> getFormats() {
         if (mFormats == null) {
             mFormats = BarcodeFormat.ALL_FORMATS;
+
+            //识别虽然快 但错误率高 貌似如下编码 识别出错
+            mFormats.remove(BarcodeFormat.DATABAR);
+            mFormats.remove(BarcodeFormat.DATABAR_EXP);
+            mFormats.remove(BarcodeFormat.EAN13);
+            mFormats.remove(BarcodeFormat.EAN8);
+            mFormats.remove(BarcodeFormat.UPCA);
+            mFormats.remove(BarcodeFormat.UPCE);
+            mFormats.remove(BarcodeFormat.I25);
+            mFormats.remove(BarcodeFormat.ISBN10);
+            mFormats.remove(BarcodeFormat.ISBN13);
         }
 
-        //识别虽然快 但错误率高 貌似如下编码 识别出错
-        mFormats.remove(BarcodeFormat.DATABAR);
-        mFormats.remove(BarcodeFormat.DATABAR_EXP);
-        mFormats.remove(BarcodeFormat.EAN13);
-        mFormats.remove(BarcodeFormat.EAN8);
-        mFormats.remove(BarcodeFormat.UPCA);
-        mFormats.remove(BarcodeFormat.UPCE);
-        mFormats.remove(BarcodeFormat.I25);
-        mFormats.remove(BarcodeFormat.ISBN10);
-        mFormats.remove(BarcodeFormat.ISBN13);
         return mFormats;
     }
 
@@ -147,5 +148,52 @@ public class ZBarScan implements IHandleScanDataListener {
 
     public interface IZbarResultListener {
         boolean onScanResult(BarcodeFormat codeFormat, String result);
+    }
+
+    public static String decodeData(final Bitmap bitmap) {
+        if (bitmap == null)
+            return "";
+
+        try {
+            Image barcode = null;
+            int bitmapWidth = bitmap.getWidth();
+            int bitmapHeight = bitmap.getHeight();
+            int[] pixels = new int[bitmapWidth * bitmapHeight];
+            bitmap.getPixels(pixels, 0, bitmapWidth, 0, 0, bitmapWidth, bitmapHeight);
+            barcode = new Image(bitmapWidth, bitmapHeight, "RGB4");
+            barcode.setData(pixels);
+            barcode = barcode.convert("Y800");
+
+            ImageScanner scanner = new ImageScanner();
+            scanner.setConfig(0, Config.X_DENSITY, 3);
+            scanner.setConfig(0, Config.Y_DENSITY, 3);
+
+            scanner.setConfig(Symbol.NONE, Config.ENABLE, 0);
+            for (BarcodeFormat format : getFormats()) {
+                scanner.setConfig(format.getId(), Config.ENABLE, 1);
+            }
+
+            if (scanner.scanImage(barcode) != 0) {
+                SymbolSet syms = scanner.getResults();
+                for (Symbol sym : syms) {
+                    // In order to retreive QR codes containing null bytes we need to
+                    // use getDataBytes() rather than getData() which uses C strings.
+                    // Weirdly ZBar transforms all data to UTF-8, even the data returned
+                    // by getDataBytes() so we have to decode it as UTF-8.
+                    String symData;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                        symData = new String(sym.getDataBytes(), StandardCharsets.UTF_8);
+                    } else {
+                        symData = sym.getData();
+                    }
+                    if (!TextUtils.isEmpty(symData)) {
+                        return symData;
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+
+        return "";
     }
 }
