@@ -13,6 +13,11 @@
 // limitations under the License.
 
 apply plugin: 'com.android.library'
+
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.github.banketree'
+
 def androidConfig = rootProject.ext.android
 
 android {
