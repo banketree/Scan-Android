@@ -142,6 +142,7 @@ public class ZXingScan implements IHandleScanDataListener {
                     } catch (ReaderException re) { // continue
                     } catch (NullPointerException npe) { // This is terrible
                     } catch (ArrayIndexOutOfBoundsException aoe) {
+                    } catch (NoClassDefFoundError ncfError) {
                     } catch (Exception ex) {
                     } finally {
                         mMultiFormatReader.reset();

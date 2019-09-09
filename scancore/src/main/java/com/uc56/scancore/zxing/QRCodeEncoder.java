@@ -85,8 +85,9 @@ public class QRCodeEncoder {
             bitmap.setPixels(pixels, 0, size, 0, 0, size, size);
             return addLogoToQRCode(bitmap, logo);
         } catch (Exception e) {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -132,7 +133,7 @@ public class QRCodeEncoder {
     public static Bitmap CreateOneDCode(String content) throws WriterException {
         // 生成一维条码,编码时指定大小,不要生成了图片以后再进行缩放,这样会模糊导致识别失败
         BitMatrix matrix = new MultiFormatWriter().encode(content,
-                BarcodeFormat.CODE_128, 600, 100);
+                BarcodeFormat.CODE_128, 400, 100);
         int width = matrix.getWidth();
         int height = matrix.getHeight();
         int[] pixels = new int[width * height];
@@ -144,10 +145,14 @@ public class QRCodeEncoder {
             }
         }
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height,
-                Bitmap.Config.ARGB_8888);
-        // 通过像素数组生成bitmap,具体参考api
-        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-        return bitmap;
+        try {
+            Bitmap bitmap = Bitmap.createBitmap(width, height,
+                    Bitmap.Config.ARGB_8888);
+            // 通过像素数组生成bitmap,具体参考api
+            bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+            return bitmap;
+        } catch (Exception e) {
+        }
+        return null;
     }
 }
