@@ -10,8 +10,6 @@ import android.graphics.YuvImage;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,12 +17,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.common.HybridBinarizer;
 import com.uc56.scan_android.test2.PlanarYUVLuminanceSource;
 import com.uc56.scancore.ScanView;
 import com.uc56.scancore.ScanView2;
+import com.uc56.scancore.ZbarBarcodeFormat;
 import com.uc56.scancore.zbar.ZBarScan;
 import com.uc56.scancore.zxing.QRCodeDecoder;
 import com.uc56.scancore.zxing.ZXingScan;
@@ -197,7 +199,7 @@ public class TestScan2Activity extends AppCompatActivity {
 
         scanView2.addHandleScanDataListener(new ZBarScan(new ZBarScan.IZbarResultListener() {
             @Override
-            public boolean onScanResult(me.dm7.barcodescanner.zbar.BarcodeFormat codeFormat, String result) {
+            public boolean onScanResult(ZbarBarcodeFormat codeFormat, String result) {
                 onScanQRCodeSuccess("result:" + result + "  ZBarScan:" + codeFormat.getName());
                 return false;
             }

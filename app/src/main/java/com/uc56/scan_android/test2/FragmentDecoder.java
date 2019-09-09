@@ -1,7 +1,10 @@
 package com.uc56.scan_android.test2;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Fragment;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -21,7 +24,6 @@ import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.v13.app.FragmentCompat;
 import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
@@ -32,6 +34,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import androidx.legacy.app.FragmentCompat;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ReaderException;
@@ -349,6 +353,7 @@ public class FragmentDecoder extends Fragment
     /**
      * Opens the camera specified by {@link FragmentDecoder#mCameraId}.
      */
+    @SuppressLint("MissingPermission")
     private void openCamera(int width, int height) {
         setUpCameraOutputs(width, height);
         configureTransform(width, height);
@@ -357,6 +362,7 @@ public class FragmentDecoder extends Fragment
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
+
             manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();

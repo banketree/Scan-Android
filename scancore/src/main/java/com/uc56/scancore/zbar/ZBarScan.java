@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.uc56.scancore.Interface.IHandleScanDataListener;
 import com.uc56.scancore.ScanUtil;
 import com.uc56.scancore.ScanView;
+import com.uc56.scancore.ZbarBarcodeFormat;
 
 import net.sourceforge.zbar.Config;
 import net.sourceforge.zbar.Image;
@@ -118,7 +119,7 @@ public class ZBarScan implements IHandleScanDataListener {
                         symData = sym.getData();
                     }
                     if (!TextUtils.isEmpty(symData)) {
-                        if (listener.onScanResult(BarcodeFormat.getFormatById(sym.getType()), symData))
+                        if (listener.onScanResult(new ZbarBarcodeFormat(BarcodeFormat.getFormatById(sym.getType())), symData))
                             return true;
 //                        rawResult.setContents(symData);
 //                        rawResult.setBarcodeFormat(BarcodeFormat.getFormatById(sym.getType()));
@@ -147,7 +148,7 @@ public class ZBarScan implements IHandleScanDataListener {
     }
 
     public interface IZbarResultListener {
-        boolean onScanResult(BarcodeFormat codeFormat, String result);
+        boolean onScanResult(ZbarBarcodeFormat codeFormat, String result);
     }
 
     public static String decodeData(final Bitmap bitmap) {

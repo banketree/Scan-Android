@@ -16,6 +16,9 @@
 
 package com.google.zxing.aztec;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.Writer;
@@ -37,6 +40,7 @@ public final class AztecWriter implements Writer {
     return encode(contents, format, width, height, null);
   }
 
+  @TargetApi(Build.VERSION_CODES.KITKAT)
   @Override
   public BitMatrix encode(String contents, BarcodeFormat format, int width, int height, Map<EncodeHintType,?> hints) {
     Charset charset = StandardCharsets.ISO_8859_1;

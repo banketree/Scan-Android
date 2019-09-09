@@ -11,7 +11,7 @@ android {
         targetSdkVersion androidConfig.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -28,20 +28,20 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:support-v13:' + androidConfig.supportLibraryVersion
-    compile 'com.android.support:appcompat-v7:' + androidConfig.supportLibraryVersion
-    compile 'com.android.support.constraint:constraint-layout:1.1.3'
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:recyclerview-v7:' + androidConfig.supportLibraryVersion
-    compile 'pub.devrel:easypermissions:1.0.0'
-    compile 'cn.bingoogolapple:bga-photopicker:1.2.3@aar'
-    compile 'cn.bingoogolapple:bga-adapter:1.2.0@aar'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile project(':scancore')
+    api 'com.android.support:support-v13:' + androidConfig.supportLibraryVersion
+    api 'com.android.support:appcompat-v7:' + androidConfig.supportLibraryVersion
+    api 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    api 'com.android.support:recyclerview-v7:' + androidConfig.supportLibraryVersion
+    api 'pub.devrel:easypermissions:1.0.0'
+    api 'cn.bingoogolapple:bga-photopicker:1.2.3@aar'
+    api 'cn.bingoogolapple:bga-adapter:1.2.0@aar'
+    api 'com.github.bumptech.glide:glide:3.7.0'
+    api project(':scancore')
 
     //测试
     testImplementation 'junit:junit:4.12'//Junit测试框架,创建项目自动引入
