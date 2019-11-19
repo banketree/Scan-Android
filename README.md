@@ -1,2 +1,2 @@
 # Scan-Android
-扫描（https://github.com/bingoogolapple/BGAQRCode-Android） 新增Zbar+ZXing同步扫描 +身份证扫描等
+扫描条形码+二维码+身份证 接口插件方式导入 参考开源项目BGAQRCode-Android
