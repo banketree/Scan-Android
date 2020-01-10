@@ -2,10 +2,13 @@
 扫描条形码+二维码+身份证 接口插件方式导入 参考开源项目BGAQRCode-Android
 
 分离条形码、二维码扫描框（扫描框 可自定义 冬天加入）
-scanView2.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_bar, null));
-scanView2.getScanBoxView().setTipText("将条形码放入框中");
+
+        scanView2.addScanBoxView(View.inflate(this, R.layout.layout_scanbox_bar, null));
+        scanView2.getScanBoxView().setTipText("将条形码放入框中");
 
 动态增加扫描的库 也可自定义增加
+
+
         scanView2.removeHandleScanDataListenerAll();
         scanView2.addHandleScanDataListener(new ZXingScan(new ZXingScan.IZXingResultListener() {
             @Override
