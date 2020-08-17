@@ -1,39 +1,18 @@
-apply plugin: 'com.android.library'
-
-apply plugin: 'com.github.dcendents.android-maven'
-
-group = 'com.github.banketree'
-
-def androidConfig = rootProject.ext.android
+apply from: "../module_build.gradle"
 
 android {
-    compileSdkVersion androidConfig.compileSdkVersion
-
-    defaultConfig {
-        minSdkVersion androidConfig.minSdkVersion
-        targetSdkVersion androidConfig.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
     sourceSets {
-        main {
-            jniLibs.srcDir 'libs'
-        }
+        main.java.srcDirs += 'src/main/base'
+        main.java.srcDirs += 'src/main/api9'
+        main.java.srcDirs += 'src/main/api14'
+        main.java.srcDirs += 'src/main/api21'
+        main.java.srcDirs += 'src/main/api23'
     }
 }
 
 dependencies {
-//    compile 'com.google.zxing:core:3.3.3'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     api ('me.dm7.barcodescanner:zxing:1.9.8'){
         exclude group: 'com.google.zxing'
     }

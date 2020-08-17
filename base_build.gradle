@@ -1,0 +1,121 @@
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+def androidConfig = rootProject.ext.android
+def dependence = rootProject.ext.dependence
+
+android {
+    compileSdkVersion androidConfig.compileSdkVersion
+    buildToolsVersion androidConfig.buildToolsVersion
+    useLibrary 'org.apache.http.legacy'
+
+    //这个是ARouter需要配置的kapt
+    kapt {
+        arguments {
+            arg("AROUTER_MODULE_NAME", project.getName())
+        }
+    }
+
+    defaultConfig {
+        multiDexEnabled true
+        minSdkVersion androidConfig.minSdkVersion
+        targetSdkVersion androidConfig.targetSdkVersion
+        versionCode androidConfig["versionCode"] // 版本号
+        versionName androidConfig["versionName"]
+
+        ndk { //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
+            abiFilters 'armeabi-v7a'//, 'x86'
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName()]
+            }
+        }
+    }
+
+    signingConfigs {
+        //keytool -list -v -keystore D:\Project\ttm-android\mvp.jks -alias juzhi -storepass 123321a -keypass 123321a
+        File file = new File('/Users/banketree/Desktop/Project/android/test-android/mvp.jks')
+        debug {
+//            keyAlias 'juzhi'
+//            keyPassword '123321a'
+//            storeFile file
+//            storePassword '123321a'
+        }
+        release {
+//            keyAlias 'juzhi'
+//            keyPassword '123321a'
+//            storeFile file
+//            storePassword '123321a'
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    //不进行代码静态检测
+    lintOptions {
+        abortOnError false
+    }
+
+    //支持java8
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions{
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    //生成libs目录
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    //支持@Parcelize来实现Parcelable序列化
+    androidExtensions {
+        experimental = true
+    }
+
+//    aaptOptions {
+//        cruncherEnabled = false
+//        useNewCruncher = false
+//    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation dependence['kotlin-stdlib-jdk7']
+    implementation dependence['core-ktx']
+    //模块嵌入
+    api dependence["module_lib"]
+
+    implementation dependence['multidex']
+    //tools
+    api dependence["timber"]
+
+    implementation dependence["kotlinx-coroutines-core"]
+}

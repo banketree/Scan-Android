@@ -1,0 +1,5 @@
+apply plugin: 'com.android.library'
+
+group = 'com.github.banketree'
+
+apply from: "../base_build.gradle"
