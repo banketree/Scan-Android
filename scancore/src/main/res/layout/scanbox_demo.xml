@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.uc56.scancore.ScanBoxView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.banketree.scancore.ScanBoxView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scanbox_bar"
     android:layout_width="match_parent"

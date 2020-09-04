@@ -20,11 +20,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.zxing.BarcodeFormat;
-import com.uc56.scancore.ScanView;
-import com.uc56.scancore.ZbarBarcodeFormat;
-import com.uc56.scancore.zbar.ZBarScan;
-import com.uc56.scancore.zxing.QRCodeDecoder;
-import com.uc56.scancore.zxing.ZXingScan;
+import com.banketree.scancore.ScanView;
+import com.banketree.scancore.ZbarBarcodeFormat;
+import com.banketree.scancore.zbar.ZBarScan;
+import com.banketree.scancore.zxing.QRCodeDecoder;
+import com.banketree.scancore.zxing.ZXingScan;
 
 import java.io.ByteArrayOutputStream;
 

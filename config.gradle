@@ -138,8 +138,10 @@ ext {
             "Scan-scancore"                : "com.github.banketree.Scan-Android:scancore:v1.2.2", //扫描
             "Scan-camera2"                 : "com.github.banketree.Scan-Android:camera2:v1.2.2", //扫描
             "ComponentLib"                 : "com.github.banketree:ComponentLib:v0.0.2", //组件模块化
-            "module_lib"                 : "com.github.banketree.ComponentLib:module_lib:v0.0.2", //组件模块化
+            "module_lib"                   : "com.github.banketree.ComponentLib:module_lib:v0.0.2", //组件模块化
             "Scan-zbar"                    : "me.dm7.barcodescanner:zbar:1.9.8", //扫描
+            "Scan-zxing"                   : "me.dm7.barcodescanner:zxing:1.9.8", //扫描
+            "zxing"                        : "com.google.zxing:core:3.3.3", //扫描
             "blue_lib"                     : "com.gitee.banketree:blue_lib:v0.1.1", //打印集合
             "print_template_suteng"        : "com.gitee.banketree.blue_lib:print_template_suteng:v0.1.1", //打印模版-速腾
             "print_template_xfg"           : "com.gitee.banketree.blue_lib:print_template_xfg:v0.1.1", //打印模版-小帆哥
