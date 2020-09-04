@@ -16,7 +16,7 @@ import com.banketree.scancore.Interface.ICameraP;
 import com.banketree.scancore.Interface.ICameraPreviewFrame;
 import com.banketree.scancore.camera.OldCameraP;
 import com.banketree.scancore.camera2.NewCameraP;
-import com.uc56.scancore.R;
+import com.banketree.scancore.R;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;

@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.banketree.scancore.Interface.IHandleScanDataListener;
 import com.banketree.scancore.camera.CameraPreview;
-import com.uc56.scancore.R;
+import com.banketree.scancore.R;
 
 import java.util.Queue;
 import java.util.concurrent.*;

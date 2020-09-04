@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.banketree.scancore.Interface.ICameraP;
 import com.banketree.scancore.Interface.ICameraPreviewFrame;
-import com.uc56.scancore.R;
+import com.banketree.scancore.R;
 
 
 public class OldCameraP implements ICameraP, Camera.PreviewCallback {

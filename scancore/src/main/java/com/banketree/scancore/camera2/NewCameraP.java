@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.android.cameraview.CameraView;
-import com.uc56.scancore.R;
+import com.banketree.scancore.R;
 import com.banketree.scancore.Interface.ICameraP;
 import com.banketree.scancore.Interface.ICameraPreviewFrame;
 

@@ -1,4 +1,4 @@
-package com.uc56.scan_android;
+package com.banketree.scan_android;
 
 import org.junit.Test;
 

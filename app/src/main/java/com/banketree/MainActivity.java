@@ -1,4 +1,4 @@
-package com.uc56.scan_android;
+package com.banketree;
 
 import android.Manifest;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.uc56.scan_android.test2.Camera2Activity;
+import com.banketree.scan_android.R;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 startActivity(new Intent(this, TestGeneratectivity.class));
                 break;
             case R.id.tv_test_camera2:
-                startActivity(new Intent(this, com.uc56.scan_android.camera2.MainActivity.class));
+                startActivity(new Intent(this, com.banketree.camera2.MainActivity.class));
                 break;
         }
 

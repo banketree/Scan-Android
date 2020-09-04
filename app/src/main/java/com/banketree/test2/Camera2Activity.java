@@ -1,4 +1,4 @@
-package com.uc56.scan_android.test2;
+package com.banketree.test2;
 
 import android.Manifest;
 import android.app.FragmentTransaction;
@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.uc56.scan_android.R;
+import com.banketree.scan_android.R;
 
 //import com.tbruyelle.rxpermissions.RxPermissions;
 //

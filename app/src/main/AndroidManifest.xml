@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.uc56.scan_android">
+    package="com.banketree.scan_android">
 
     <!--
         为了方便写demo，引入了 https://github.com/bingoogolapple/BGAPhotoPicker-Android
@@ -21,7 +21,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.banketree.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -31,16 +31,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".TestScanActivity" />
+        <activity android:name="com.banketree.TestScanActivity" />
         
-        <activity android:name=".TestScan2Activity" />
+        <activity android:name="com.banketree.TestScan2Activity" />
 
-        <activity android:name=".test2.Camera2Activity" />
+        <activity android:name="com.banketree.test2.Camera2Activity" />
 
-        <activity android:name=".camera2.MainActivity" />
+        <activity android:name="com.banketree.camera2.MainActivity" />
 
         <activity
-            android:name=".TestGeneratectivity"
+            android:name="com.banketree.TestGeneratectivity"
             android:screenOrientation="portrait" />
     </application>
 

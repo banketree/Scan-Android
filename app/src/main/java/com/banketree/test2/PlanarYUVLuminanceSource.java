@@ -1,4 +1,4 @@
-package com.uc56.scan_android.test2;
+package com.banketree.test2;
 
 import com.google.zxing.LuminanceSource;
 

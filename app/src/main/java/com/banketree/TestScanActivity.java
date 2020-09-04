@@ -1,4 +1,4 @@
-package com.uc56.scan_android;
+package com.banketree;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,6 +25,7 @@ import com.banketree.scancore.ZbarBarcodeFormat;
 import com.banketree.scancore.zbar.ZBarScan;
 import com.banketree.scancore.zxing.QRCodeDecoder;
 import com.banketree.scancore.zxing.ZXingScan;
+import com.banketree.scan_android.R;
 
 import java.io.ByteArrayOutputStream;
 

@@ -6,7 +6,7 @@ android {
     compileSdkVersion androidConfig.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.uc56.scan_android"
+        applicationId "com.banketree.scan_android"
         minSdkVersion androidConfig.minSdkVersion
         targetSdkVersion androidConfig.targetSdkVersion
         versionCode 1

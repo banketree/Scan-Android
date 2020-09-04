@@ -1,4 +1,4 @@
-package com.uc56.scan_android;
+package com.banketree.scan_android;
 
 import android.content.Context;
 import androidx.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.uc56.scan_android", appContext.getPackageName());
+        assertEquals("com.banketree.scan_android", appContext.getPackageName());
     }
 }

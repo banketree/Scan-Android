@@ -20,7 +20,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.uc56.scancore.R;
+import com.banketree.scancore.R;
 
 
 //扫描框（原始）

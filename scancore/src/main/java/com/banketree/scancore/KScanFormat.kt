@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATED_IDENTITY_EQUALS")
 
-package com.uc56.scancore
+package com.banketree.scancore
 
 import com.banketree.scancore.ZbarBarcodeFormat
 

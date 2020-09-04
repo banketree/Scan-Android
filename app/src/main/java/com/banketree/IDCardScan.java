@@ -1,4 +1,4 @@
-package com.uc56.scan_android;
+package com.banketree;
 
 import android.graphics.Rect;
 

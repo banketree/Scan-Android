@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.uc56.scan_android.camera2;
+package com.banketree.camera2;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -46,7 +46,7 @@ import android.widget.Toast;
 
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
-import com.uc56.scan_android.R;
+import com.banketree.scan_android.R;
 
 import java.io.File;
 import java.io.FileOutputStream;

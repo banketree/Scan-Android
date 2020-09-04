@@ -1,10 +1,8 @@
-package com.uc56.scan_android.test2;
+package com.banketree.test2;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Fragment;
-import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -42,7 +40,7 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
-import com.uc56.scan_android.R;
+import com.banketree.scan_android.R;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

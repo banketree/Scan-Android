@@ -1,4 +1,4 @@
-package com.uc56.scan_android;
+package com.banketree;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.banketree.scancore.ScanUtil;
 import com.banketree.scancore.zxing.QRCodeDecoder;
 import com.banketree.scancore.zxing.QRCodeEncoder;
+import com.banketree.scan_android.R;
 
 
 public class TestGeneratectivity extends AppCompatActivity {
