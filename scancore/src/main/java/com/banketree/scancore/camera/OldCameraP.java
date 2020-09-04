@@ -1,4 +1,4 @@
-package com.uc56.scancore.camera;
+package com.banketree.scancore.camera;
 
 import android.content.Context;
 import android.hardware.Camera;
@@ -6,8 +6,8 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
-import com.uc56.scancore.Interface.ICameraP;
-import com.uc56.scancore.Interface.ICameraPreviewFrame;
+import com.banketree.scancore.Interface.ICameraP;
+import com.banketree.scancore.Interface.ICameraPreviewFrame;
 import com.uc56.scancore.R;
 
 

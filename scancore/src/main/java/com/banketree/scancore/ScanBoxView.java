@@ -1,4 +1,4 @@
-package com.uc56.scancore;
+package com.banketree.scancore;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.hardware.Camera;
 import android.os.Build;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -20,6 +19,8 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.uc56.scancore.R;
 
 
 //扫描框（原始）

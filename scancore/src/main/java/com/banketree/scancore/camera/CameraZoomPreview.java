@@ -1,19 +1,13 @@
-package com.uc56.scancore.camera;
+package com.banketree.scancore.camera;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
-import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.uc56.scancore.camera;
+package com.banketree.scancore.camera;
 
 import android.graphics.Point;
 import android.graphics.Rect;

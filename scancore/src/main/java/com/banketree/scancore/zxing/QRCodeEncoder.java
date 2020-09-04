@@ -1,4 +1,4 @@
-package com.uc56.scancore.zxing;
+package com.banketree.scancore.zxing;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

@@ -1,15 +1,13 @@
-package com.uc56.scancore.zbar;
+package com.banketree.scancore.zbar;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.text.TextUtils;
 
-import com.uc56.scancore.Interface.IHandleScanDataListener;
-import com.uc56.scancore.ScanUtil;
-import com.uc56.scancore.ScanView;
-import com.uc56.scancore.ZbarBarcodeFormat;
+import com.banketree.scancore.Interface.IHandleScanDataListener;
+import com.banketree.scancore.ScanUtil;
+import com.banketree.scancore.ZbarBarcodeFormat;
 
 import net.sourceforge.zbar.Config;
 import net.sourceforge.zbar.Image;
@@ -22,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 
 import me.dm7.barcodescanner.zbar.BarcodeFormat;
-import me.dm7.barcodescanner.zbar.Result;
 
 public class ZBarScan implements IHandleScanDataListener {
     private boolean release = false;

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/MatchMatch">
 
-    <com.uc56.scancore.ScanView2
+    <com.banketree.scancore.ScanView2
         android:id="@+id/zxingview"
         style="@style/MatchMatch"
         app:sc_animTime="1000"

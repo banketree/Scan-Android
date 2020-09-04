@@ -2,8 +2,7 @@ package com.uc56.scan_android;
 
 import android.graphics.Rect;
 
-import com.uc56.scancore.Interface.IHandleScanDataListener;
-import com.uc56.scancore.ScanView;
+import com.banketree.scancore.Interface.IHandleScanDataListener;
 
 
 /**

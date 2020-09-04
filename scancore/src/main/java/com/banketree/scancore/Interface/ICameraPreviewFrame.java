@@ -1,4 +1,4 @@
-package com.uc56.scancore.Interface;
+package com.banketree.scancore.Interface;
 
 public interface ICameraPreviewFrame {
 

@@ -1,18 +1,10 @@
-package com.uc56.scancore.zxing;
+package com.banketree.scancore.zxing;
 
 
-import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
-import android.hardware.Camera;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
-import android.util.AttributeSet;
-import android.util.Log;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
@@ -25,18 +17,14 @@ import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
-import com.uc56.scancore.Interface.IHandleScanDataListener;
-import com.uc56.scancore.ScanUtil;
-import com.uc56.scancore.ScanView;
+import com.banketree.scancore.Interface.IHandleScanDataListener;
+import com.banketree.scancore.ScanUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ZXingScan implements IHandleScanDataListener {
     private IZXingResultListener listener;

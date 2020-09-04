@@ -1,4 +1,4 @@
-package com.uc56.scancore;
+package com.banketree.scancore;
 
 import me.dm7.barcodescanner.zbar.BarcodeFormat;
 

@@ -1,97 +1,62 @@
-package com.uc56.scancore;
+package com.banketree.scancore;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
-import com.google.android.cameraview.CameraView;
-import com.uc56.scancore.Interface.IHandleScanDataListener;
-import com.uc56.scancore.Interface.ICameraP;
-import com.uc56.scancore.Interface.ICameraPreviewFrame;
-import com.uc56.scancore.camera.OldCameraP;
-import com.uc56.scancore.camera2.NewCameraP;
+import com.banketree.scancore.Interface.IHandleScanDataListener;
+import com.banketree.scancore.camera.CameraPreview;
+import com.uc56.scancore.R;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.*;
 
 import me.dm7.barcodescanner.core.DisplayUtils;
 
 
-public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
+public class ScanView extends RelativeLayout implements Camera.PreviewCallback {
+    protected Camera mCamera;
+    protected CameraPreview mPreview;
     protected ScanBoxView mBoxView;
 
     private volatile Queue<IHandleScanDataListener> handleScanDataListenerQueue = new ConcurrentLinkedQueue<IHandleScanDataListener>();
 
-    protected volatile boolean mSpotAble = false;
-    protected volatile Thread mProcessDataTask;
-    LayoutParams layoutParams;
+    protected Handler mHandler;
+    protected boolean mSpotAble = false;
+    protected Thread mProcessDataTask;
+    private int mOrientation;
+    RelativeLayout.LayoutParams layoutParams;
     private Context context;
-    private ICameraP iCameraP;//新老 camera 版本
-    private FrameLayout containerFrameLayout;
-    FrameLayout.LayoutParams containerLayoutParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-    public ScanView2(Context context, AttributeSet attributeSet) {
+    private int cameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
+
+    public ScanView(Context context, AttributeSet attributeSet) {
         this(context, attributeSet, 0);
     }
 
-    public ScanView2(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ScanView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mHandler = new Handler();
         initView(context, attrs);
     }
 
+
     private void initView(Context context, AttributeSet attrs) {
         this.context = context;
-        layoutParams = new LayoutParams(context, attrs);
-        containerFrameLayout = new FrameLayout(context);
-        containerFrameLayout.setId(R.id.scan_camera_preview_frame);
-        addView(containerFrameLayout);
-        layoutParams.addRule(RelativeLayout.ALIGN_TOP, containerFrameLayout.getId());
-        layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, containerFrameLayout.getId());
-        showCameraByOld();
-    }
+        mPreview = new CameraPreview(getContext());
+        mPreview.setId(R.id.scan_camera_preview);
+        addView(mPreview);
+        mOrientation = ScanUtil.getOrientation(context);
 
-    public void showCameraByOld() {
-        addCameraView(false);
-    }
-
-    public void showCameraByNew() {
-        addCameraView(true);
-    }
-
-    private void addCameraView(boolean newView) {
-        boolean first = iCameraP == null;
-        removeCameraView();
-        //setRequireCamera1(true); //目前发现 ocr 识别有问题
-        iCameraP = newView ? new NewCameraP(context) : new OldCameraP(context);
-        iCameraP.setCameraPreviewFrame(this);
-        containerFrameLayout.addView(iCameraP.getCameraPreView(), containerLayoutParams);
-    }
-
-    public void removeCameraView() {
-        if (iCameraP == null) return;
-        containerFrameLayout.removeView(iCameraP.getCameraPreView());
-        iCameraP.stopSpot();
-        iCameraP.stopCamera();
-        iCameraP.onDestroy();
-    }
-
-    public boolean isCameraNewView() {
-        return iCameraP != null && (iCameraP instanceof NewCameraP);
-    }
-
-    public boolean isCamera1() {
-        if (isCameraNewView()) ((NewCameraP) iCameraP).isCamera1();
-        return true;
-    }
-
-    public void setRequireCamera1(boolean requireCamera1) {
-        CameraView.isRequireCamera1 = requireCamera1;
+        layoutParams = new RelativeLayout.LayoutParams(context, attrs);
+        layoutParams.addRule(RelativeLayout.ALIGN_TOP, mPreview.getId());
+        layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, mPreview.getId());
     }
 
     public void addScanBoxView(View view) {
@@ -192,34 +157,89 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
         }
     }
 
-    public View getCameraPreView() {
-        if (iCameraP == null) return null;
-        return iCameraP.getCameraPreView();
-    }
-
     /**
      * 打开后置摄像头开始预览，但是并未开始识别
      */
     public void startCamera() {
-        if (iCameraP == null) return;
-        iCameraP.startCamera();
+        startCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+    }
+
+    /**
+     * 打开指定摄像头开始预览，但是并未开始识别
+     *
+     * @param cameraFacing
+     */
+    public void startCamera(int cameraFacing) {
+        if (mCamera != null) {
+            return;
+        }
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        for (int cameraId = 0; cameraId < Camera.getNumberOfCameras(); cameraId++) {
+            Camera.getCameraInfo(cameraId, cameraInfo);
+            if (cameraInfo.facing == cameraFacing) {
+                startCameraById(cameraId);
+                break;
+            }
+        }
+    }
+
+    public CameraPreview getCameraPreView() {
+        return mPreview;
+    }
+
+    private void startCameraById(int cameraId) {
+        try {
+            this.cameraId = cameraId;
+            mCamera = Camera.open(cameraId);
+            mPreview.setTag(cameraId);
+            mPreview.setCamera(mCamera);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "打开相机出错", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
      * 关闭摄像头预览，并且隐藏扫描框
      */
     public void stopCamera() {
-        if (iCameraP == null) return;
-        iCameraP.stopCamera();
+        stopSpotAndHiddenRect();
+        if (mPreview != null) {
+            mPreview.stopCameraPreview();
+            mPreview.setCamera(null);
+        }
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+
+        try {
+        } catch (Exception e) {
+        }
     }
 
     /**
      * 延迟0.5秒后开始识别
      */
     public void startSpot() {
-        if (iCameraP == null) return;
+        startSpotDelay(500);
+    }
+
+    /**
+     * 延迟delay毫秒后开始识别
+     *
+     * @param delay
+     */
+    public void startSpotDelay(int delay) {
         mSpotAble = true;
-        iCameraP.startSpot();
+
+        try {
+            startCamera();
+            // 开始前先移除之前的任务
+            if (mOneShotPreviewCallbackTask != null)
+                mHandler.removeCallbacks(mOneShotPreviewCallbackTask);
+            mHandler.postDelayed(mOneShotPreviewCallbackTask, delay);
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -227,21 +247,28 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      */
     public void stopSpot() {
         cancelProcessDataTask();
+
         mSpotAble = false;
-        if (iCameraP == null) return;
-        iCameraP.stopSpot();
+
+        if (mCamera != null) {
+            try {
+                mCamera.setOneShotPreviewCallback(null);
+            } catch (Exception e) {
+            }
+        }
+        if (mHandler != null) {
+            mHandler.removeCallbacks(mOneShotPreviewCallbackTask);
+        }
     }
 
     /**
      * 停止识别，并且隐藏扫描框
      */
     public void stopSpotAndHiddenRect() {
-        if (iCameraP == null) return;
         try {
             stopSpot();
             hiddenScanRect();
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -249,7 +276,6 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 显示扫描框，并且延迟1.5秒后开始识别
      */
     public void startSpotAndShowRect() {
-        if (iCameraP == null) return;
         try {
             startSpot();
             showScanRect();
@@ -261,25 +287,23 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
      * 打开闪光灯
      */
     public void openFlashlight() {
-        if (iCameraP == null) return;
-        iCameraP.openFlashlight();
+        mPreview.openFlashlight();
     }
 
     /**
      * 关闭散光灯
      */
     public void closeFlashlight() {
-        if (iCameraP == null) return;
-        iCameraP.closeFlashlight();
+        mPreview.closeFlashlight();
     }
 
     /**
      * 销毁二维码扫描控件
      */
     public void onDestroy() {
-        setRequireCamera1(false);
-        removeCameraView();
-        iCameraP = null;
+        stopCamera();
+        mHandler = null;
+        mOneShotPreviewCallbackTask = null;
     }
 
     /**
@@ -295,45 +319,54 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
         mProcessDataTask = null;
     }
 
-    private long lastPreviewFrameTime = 0;//上次时间
-
     @Override
-    public void onPreviewFrame(final ICameraP iCameraP, final byte[] previewData, final int format, final int previewWidth, final int previewHeight) {
+    public void onPreviewFrame(final byte[] previewData, final Camera camera) {
         try {
-            if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty() || mProcessDataTask != null)
+            if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty() || camera == null || camera.getParameters() == null)
                 return;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (iCameraP instanceof NewCameraP && System.currentTimeMillis() - lastPreviewFrameTime <= 100) {//防止过快
-            return;
-        }
-        lastPreviewFrameTime = System.currentTimeMillis();
         try {
-            final Rect rect = mBoxView != null ? mBoxView.getScanBoxAreaRect(previewWidth, previewHeight) : null;
+            final Camera.Parameters parameters = mCamera.getParameters();
+            final Camera.Size size = parameters.getPreviewSize();
+            final Rect rect = mBoxView != null ? mBoxView.getScanBoxAreaRect(size.width, size.height) : null;
+
+            cancelProcessDataTask();
             mProcessDataTask = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty()) {
-                        cancelProcessDataTask();
+                    if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
                         return;
-                    }
 
                     try { //数据处理
-                        if (format == ImageFormat.JPEG) {
-                            handleNewCameraPreviewData(iCameraP, previewData, format, previewWidth, previewHeight, rect);
-                        } else {
-                            handleOldCameraPreviewData(iCameraP, previewData, format, previewWidth, previewHeight, rect);
+                        int width = size.width;
+                        int height = size.height;
+                        byte[] data = previewData;
+                        if (DisplayUtils.getScreenOrientation(getContext()) == Configuration.ORIENTATION_PORTRAIT) {
+                            int rotationCount = getRotationCount();
+                            if (rotationCount == 1 || rotationCount == 3) {
+                                data = getRotatedData(rotationCount, data, width, height);
+
+                                int tmp = width;
+                                width = height;
+                                height = tmp;
+                            }
+                        }
+
+                        if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
+                            return;
+
+                        for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
+                            if (listener.onHandleScanData(previewData, data, parameters.getPreviewFormat(), width, height, rect) && mSpotAble && !getHandleScanDataListenerQueque().isEmpty())
+                                break;
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
                     }
 
                     try { //是否继续扫描
-                        if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty()) {
-                            cancelProcessDataTask();
+                        if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
                             return;
-                        }
 
                         boolean isContinuity = false;
                         for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
@@ -343,79 +376,41 @@ public class ScanView2 extends RelativeLayout implements ICameraPreviewFrame {
                             }
                         }
 
-                        if (!isContinuity) {
-                            cancelProcessDataTask();
+                        if (!isContinuity)
                             return;
-                        }
                     } catch (Exception e) {
                     }
+
                     try { //继续扫描
-                        if (iCameraP instanceof OldCameraP) {
-                            ((OldCameraP) iCameraP).continueShot();
-                        }
+                        System.gc();
+                        mHandler.post(mOneShotPreviewCallbackTask);
                     } catch (Exception e) {
                     }
-                    cancelProcessDataTask();
                 }
             });
             mProcessDataTask.start();
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void handleOldCameraPreviewData(final ICameraP iCameraP, final byte[] previewData, final int format, final int previewWidth, final int previewHeight, final Rect boxRect) throws Exception {
-        int width = previewWidth;
-        int height = previewHeight;
-        byte[] data = previewData;
-        if (DisplayUtils.getScreenOrientation(getContext()) == Configuration.ORIENTATION_PORTRAIT) {
-            int rotationCount = getRotationCount();
-            if (rotationCount == 1 || rotationCount == 3) {
-                data = getRotatedData(rotationCount, data, width, height);
-
-                int tmp = width;
-                width = height;
-                height = tmp;
-            }
-        }
-
-        if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
-            return;
-
-        for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
-            if (listener.onHandleScanData(previewData, data, format, width, height, boxRect) && mSpotAble && !getHandleScanDataListenerQueque().isEmpty())
-                break;
-        }
-    }
-
-    public void handleNewCameraPreviewData(final ICameraP iCameraP, final byte[] previewData, final int format, final int previewWidth, final int previewHeight, Rect boxRect) throws Exception {
-        if (!mSpotAble || getHandleScanDataListenerQueque().isEmpty())
-            return;
-
-        int width = previewWidth;
-        int height = previewHeight;
-        byte[] data = previewData;
-
-        if (DisplayUtils.getScreenOrientation(getContext()) == Configuration.ORIENTATION_PORTRAIT) {
-            int rotationCount = getRotationCount();
-            if (rotationCount == 1 || rotationCount == 3) {
-                int tmp = width;
-                width = height;
-                height = tmp;
-            }
-        }
-
-//        boxRect = ScanUtil.getRectInPreview(context, boxRect, new Point(width, height));
-        for (IHandleScanDataListener listener : getHandleScanDataListenerQueque()) {
-            if (listener.onHandleScanData(previewData, data, format, width, height, boxRect) && mSpotAble && !getHandleScanDataListenerQueque().isEmpty())
-                break;
         }
     }
 
     public int getRotationCount() {
-        int displayOrientation = ScanUtil.getDisplayOrientation(context, Camera.CameraInfo.CAMERA_FACING_BACK);
+        int displayOrientation = ScanUtil.getDisplayOrientation(context, cameraId);
         return displayOrientation / 90;
     }
+
+
+    private Runnable mOneShotPreviewCallbackTask = new Runnable() {
+        @Override
+        public void run() {
+            if (mCamera != null && mSpotAble) {
+                try {
+                    mCamera.setOneShotPreviewCallback(ScanView.this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 
     public static void rotateYUV240SP(byte[] src, byte[] des, int width, int height) {
         int wh = width * height;

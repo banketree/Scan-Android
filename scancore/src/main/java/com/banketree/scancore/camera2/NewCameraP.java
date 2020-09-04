@@ -1,4 +1,4 @@
-package com.uc56.scancore.camera2;
+package com.banketree.scancore.camera2;
 
 import android.content.Context;
 import android.util.Log;
@@ -6,8 +6,8 @@ import android.view.View;
 
 import com.google.android.cameraview.CameraView;
 import com.uc56.scancore.R;
-import com.uc56.scancore.Interface.ICameraP;
-import com.uc56.scancore.Interface.ICameraPreviewFrame;
+import com.banketree.scancore.Interface.ICameraP;
+import com.banketree.scancore.Interface.ICameraPreviewFrame;
 
 
 public class NewCameraP implements ICameraP {

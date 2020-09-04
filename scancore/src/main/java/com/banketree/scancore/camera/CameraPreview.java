@@ -1,4 +1,4 @@
-package com.uc56.scancore.camera;
+package com.banketree.scancore.camera;
 
 import android.content.Context;
 import android.content.pm.PackageManager;

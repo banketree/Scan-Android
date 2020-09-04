@@ -1,5 +1,7 @@
 apply from: "../module_build.gradle"
 
+def dependence = rootProject.ext.dependence
+
 android {
     sourceSets {
         main.java.srcDirs += 'src/main/base'

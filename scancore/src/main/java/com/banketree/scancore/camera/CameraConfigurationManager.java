@@ -1,17 +1,13 @@
-package com.uc56.scancore.camera;
+package com.banketree.scancore.camera;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
-import com.uc56.scancore.ScanUtil;
+import com.banketree.scancore.ScanUtil;
 
 import java.util.Collection;
 import java.util.List;

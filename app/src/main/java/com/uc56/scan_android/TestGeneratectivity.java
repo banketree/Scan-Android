@@ -13,9 +13,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.uc56.scancore.ScanUtil;
-import com.uc56.scancore.zxing.QRCodeDecoder;
-import com.uc56.scancore.zxing.QRCodeEncoder;
+import com.banketree.scancore.ScanUtil;
+import com.banketree.scancore.zxing.QRCodeDecoder;
+import com.banketree.scancore.zxing.QRCodeEncoder;
 
 
 public class TestGeneratectivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package com.uc56.scancore;
+package com.banketree.scancore;
 
 import android.content.Context;
 import android.content.res.Configuration;
