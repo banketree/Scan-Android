@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Scan-Android.iml" filepath="$PROJECT_DIR$/Scan-Android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/Scan-Android-app.iml" filepath="$PROJECT_DIR$/app/Scan-Android-app.iml" group="Scan-Android/app" />
-      <module fileurl="file://$PROJECT_DIR$/camera2/Scan-Android-camera2.iml" filepath="$PROJECT_DIR$/camera2/Scan-Android-camera2.iml" group="Scan-Android/camera2" />
-      <module fileurl="file://$PROJECT_DIR$/scancore/Scan-Android-scancore.iml" filepath="$PROJECT_DIR$/scancore/Scan-Android-scancore.iml" group="Scan-Android/scancore" />
-      <module fileurl="file://$PROJECT_DIR$/android-Scan-Android.iml" filepath="$PROJECT_DIR$/android-Scan-Android.iml" group="Scan-Android" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/camera2/camera2.iml" filepath="$PROJECT_DIR$/camera2/camera2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/scancore/scancore.iml" filepath="$PROJECT_DIR$/scancore/scancore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Scan-Android.iml" filepath="$PROJECT_DIR$/Scan-Android.iml" group="Scan-Android" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Scan-Android/app" />
+      <module fileurl="file://$PROJECT_DIR$/camera2/camera2.iml" filepath="$PROJECT_DIR$/camera2/camera2.iml" group="Scan-Android/camera2" />
+      <module fileurl="file://$PROJECT_DIR$/scancore/scancore.iml" filepath="$PROJECT_DIR$/scancore/scancore.iml" group="Scan-Android/scancore" />
     </modules>
   </component>
 </project>
