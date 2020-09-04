@@ -13,9 +13,11 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api ('me.dm7.barcodescanner:zxing:1.9.8'){
+    api(dependence["Scan-zxing"]) {
         exclude group: 'com.google.zxing'
     }
-    api 'me.dm7.barcodescanner:zbar:1.9.8'
+
+    api dependence["zxing"]
+    api dependence["Scan-zbar"]
     api project(':camera2')
 }
